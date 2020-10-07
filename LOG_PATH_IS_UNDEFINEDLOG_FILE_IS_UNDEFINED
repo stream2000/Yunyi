@@ -1,0 +1,72 @@
+2020-10-07 15:29:18,051 [INFO] [main] net.yunyi.back.BackApplication [StartupInfoLogger.java : 50] Starting BackApplication on maplesMacBookPro.local with PID 82295 (/Users/fuqijun/developer/java/framework/back/target/classes started by fuqijun in /Users/fuqijun/developer/java/framework/back)
+2020-10-07 15:29:18,055 [INFO] [main] net.yunyi.back.BackApplication [SpringApplication.java : 659] No active profile set, falling back to default profiles: default
+2020-10-07 15:29:18,096 [INFO] [main] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext [AbstractApplicationContext.java : 590] Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@41a2befb: startup date [Wed Oct 07 15:29:18 CST 2020]; root of context hierarchy
+2020-10-07 15:29:18,907 [INFO] [main] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [PostProcessorRegistrationDelegate.java : 328] Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$4b2b1804] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-10-07 15:29:19,111 [INFO] [main] org.springframework.boot.web.embedded.tomcat.TomcatWebServer [TomcatWebServer.java : 91] Tomcat initialized with port(s): 9999 (http)
+2020-10-07 15:29:19,133 [INFO] [main] org.apache.catalina.core.StandardService [DirectJDKLog.java : 180] Starting service [Tomcat]
+2020-10-07 15:29:19,134 [INFO] [main] org.apache.catalina.core.StandardEngine [DirectJDKLog.java : 180] Starting Servlet Engine: Apache Tomcat/8.5.29
+2020-10-07 15:29:19,138 [INFO] [localhost-startStop-1] org.apache.catalina.core.AprLifecycleListener [DirectJDKLog.java : 180] The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [/Users/fuqijun/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.]
+2020-10-07 15:29:19,216 [INFO] [localhost-startStop-1] o.a.catalina.core.ContainerBase.[Tomcat].[localhost].[/] [DirectJDKLog.java : 180] Initializing Spring embedded WebApplicationContext
+2020-10-07 15:29:19,216 [INFO] [localhost-startStop-1] org.springframework.web.context.ContextLoader [ServletWebServerApplicationContext.java : 285] Root WebApplicationContext: initialization completed in 1120 ms
+2020-10-07 15:29:19,320 [INFO] [localhost-startStop-1] org.springframework.boot.web.servlet.ServletRegistrationBean [ServletRegistrationBean.java : 185] Servlet dispatcherServlet mapped to [/]
+2020-10-07 15:29:19,326 [INFO] [localhost-startStop-1] org.springframework.boot.web.servlet.FilterRegistrationBean [AbstractFilterRegistrationBean.java : 244] Mapping filter: 'characterEncodingFilter' to: [/*]
+2020-10-07 15:29:19,326 [INFO] [localhost-startStop-1] org.springframework.boot.web.servlet.FilterRegistrationBean [AbstractFilterRegistrationBean.java : 244] Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2020-10-07 15:29:19,326 [INFO] [localhost-startStop-1] org.springframework.boot.web.servlet.FilterRegistrationBean [AbstractFilterRegistrationBean.java : 244] Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2020-10-07 15:29:19,327 [INFO] [localhost-startStop-1] org.springframework.boot.web.servlet.FilterRegistrationBean [AbstractFilterRegistrationBean.java : 244] Mapping filter: 'requestContextFilter' to: [/*]
+2020-10-07 15:29:19,997 [INFO] [main] o.s.w.s.mvc.method.annotation.RequestMappingHandlerMapping [AbstractHandlerMethodMapping.java : 547] Mapped "{[/],methods=[GET]}" onto public java.util.List<net.yunyi.back.persistence.entity.User> net.yunyi.back.controller.UserController.getAllUser()
+2020-10-07 15:29:20,000 [INFO] [main] o.s.w.s.mvc.method.annotation.RequestMappingHandlerMapping [AbstractHandlerMethodMapping.java : 547] Mapped "{[/v3/api-docs],methods=[GET],produces=[application/json || application/hal+json]}" onto public org.springframework.http.ResponseEntity<springfox.documentation.spring.web.json.Json> springfox.documentation.oas.web.OpenApiControllerWebMvc.getDocumentation(java.lang.String,javax.servlet.http.HttpServletRequest)
+2020-10-07 15:29:20,004 [INFO] [main] o.s.w.s.mvc.method.annotation.RequestMappingHandlerMapping [AbstractHandlerMethodMapping.java : 547] Mapped "{[/swagger-resources/configuration/security],methods=[GET],produces=[application/json]}" onto public org.springframework.http.ResponseEntity<springfox.documentation.swagger.web.SecurityConfiguration> springfox.documentation.swagger.web.ApiResourceController.securityConfiguration()
+2020-10-07 15:29:20,006 [INFO] [main] o.s.w.s.mvc.method.annotation.RequestMappingHandlerMapping [AbstractHandlerMethodMapping.java : 547] Mapped "{[/swagger-resources/configuration/ui],methods=[GET],produces=[application/json]}" onto public org.springframework.http.ResponseEntity<springfox.documentation.swagger.web.UiConfiguration> springfox.documentation.swagger.web.ApiResourceController.uiConfiguration()
+2020-10-07 15:29:20,006 [INFO] [main] o.s.w.s.mvc.method.annotation.RequestMappingHandlerMapping [AbstractHandlerMethodMapping.java : 547] Mapped "{[/swagger-resources],methods=[GET],produces=[application/json]}" onto public org.springframework.http.ResponseEntity<java.util.List<springfox.documentation.swagger.web.SwaggerResource>> springfox.documentation.swagger.web.ApiResourceController.swaggerResources()
+2020-10-07 15:29:20,008 [INFO] [main] o.s.w.s.mvc.method.annotation.RequestMappingHandlerMapping [AbstractHandlerMethodMapping.java : 547] Mapped "{[/v2/api-docs],methods=[GET],produces=[application/json || application/hal+json]}" onto public org.springframework.http.ResponseEntity<springfox.documentation.spring.web.json.Json> springfox.documentation.swagger2.web.Swagger2ControllerWebMvc.getDocumentation(java.lang.String,javax.servlet.http.HttpServletRequest)
+2020-10-07 15:29:20,011 [INFO] [main] o.s.w.s.mvc.method.annotation.RequestMappingHandlerMapping [AbstractHandlerMethodMapping.java : 547] Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2020-10-07 15:29:20,011 [INFO] [main] o.s.w.s.mvc.method.annotation.RequestMappingHandlerMapping [AbstractHandlerMethodMapping.java : 547] Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2020-10-07 15:29:20,166 [INFO] [main] o.s.web.servlet.handler.SimpleUrlHandlerMapping [AbstractUrlHandlerMapping.java : 373] Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2020-10-07 15:29:20,307 [INFO] [main] o.s.w.s.mvc.method.annotation.RequestMappingHandlerAdapter [RequestMappingHandlerAdapter.java : 574] Looking for @ControllerAdvice: org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@41a2befb: startup date [Wed Oct 07 15:29:18 CST 2020]; root of context hierarchy
+2020-10-07 15:29:20,336 [INFO] [main] o.s.web.servlet.handler.SimpleUrlHandlerMapping [AbstractUrlHandlerMapping.java : 373] Mapped URL path [/swagger-ui/] onto handler of type [class org.springframework.web.servlet.mvc.ParameterizableViewController]
+2020-10-07 15:29:20,342 [INFO] [main] o.s.web.servlet.handler.BeanNameUrlHandlerMapping [AbstractUrlHandlerMapping.java : 373] Mapped URL path [/user] onto handler '/user'
+2020-10-07 15:29:20,348 [INFO] [main] o.s.web.servlet.handler.SimpleUrlHandlerMapping [AbstractUrlHandlerMapping.java : 373] Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2020-10-07 15:29:20,349 [INFO] [main] o.s.web.servlet.handler.SimpleUrlHandlerMapping [AbstractUrlHandlerMapping.java : 373] Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2020-10-07 15:29:20,349 [INFO] [main] o.s.web.servlet.handler.SimpleUrlHandlerMapping [AbstractUrlHandlerMapping.java : 373] Mapped URL path [/swagger-ui/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2020-10-07 15:29:20,567 [INFO] [main] o.s.jmx.export.annotation.AnnotationMBeanExporter [MBeanExporter.java : 433] Registering beans for JMX exposure on startup
+2020-10-07 15:29:20,569 [INFO] [main] o.s.jmx.export.annotation.AnnotationMBeanExporter [MBeanExporter.java : 895] Bean with name 'dataSource' has been autodetected for JMX exposure
+2020-10-07 15:29:20,575 [INFO] [main] o.s.jmx.export.annotation.AnnotationMBeanExporter [MBeanExporter.java : 668] Located MBean 'dataSource': registering with JMX server as MBean [com.zaxxer.hikari:name=dataSource,type=HikariDataSource]
+2020-10-07 15:29:20,579 [INFO] [main] o.springframework.context.support.DefaultLifecycleProcessor [DefaultLifecycleProcessor.java : 351] Starting beans in phase 2147483647
+2020-10-07 15:29:20,621 [WARN] [main] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext [AbstractApplicationContext.java : 558] Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'documentationPluginsBootstrapper'; nested exception is java.lang.NoSuchMethodError: org.springframework.plugin.core.PluginRegistry.getPluginFor(Ljava/lang/Object;)Ljava/util/Optional;
+2020-10-07 15:29:20,621 [INFO] [main] o.s.jmx.export.annotation.AnnotationMBeanExporter [MBeanExporter.java : 451] Unregistering JMX-exposed beans on shutdown
+2020-10-07 15:29:20,622 [INFO] [main] o.s.jmx.export.annotation.AnnotationMBeanExporter [MBeanRegistrationSupport.java : 183] Unregistering JMX-exposed beans
+2020-10-07 15:29:20,627 [INFO] [main] org.apache.catalina.core.StandardService [DirectJDKLog.java : 180] Stopping service [Tomcat]
+2020-10-07 15:29:20,641 [INFO] [main] o.s.b.a.logging.ConditionEvaluationReportLoggingListener [ConditionEvaluationReportLoggingListener.java : 101] 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2020-10-07 15:29:20,647 [ERROR] [main] org.springframework.boot.SpringApplication [SpringApplication.java : 842] Application run failed
+org.springframework.context.ApplicationContextException: Failed to start bean 'documentationPluginsBootstrapper'; nested exception is java.lang.NoSuchMethodError: org.springframework.plugin.core.PluginRegistry.getPluginFor(Ljava/lang/Object;)Ljava/util/Optional;
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:184)
+	at org.springframework.context.support.DefaultLifecycleProcessor.access$200(DefaultLifecycleProcessor.java:52)
+	at org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup.start(DefaultLifecycleProcessor.java:356)
+	at org.springframework.context.support.DefaultLifecycleProcessor.startBeans(DefaultLifecycleProcessor.java:157)
+	at org.springframework.context.support.DefaultLifecycleProcessor.onRefresh(DefaultLifecycleProcessor.java:121)
+	at org.springframework.context.support.AbstractApplicationContext.finishRefresh(AbstractApplicationContext.java:885)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.finishRefresh(ServletWebServerApplicationContext.java:161)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:553)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:140)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:759)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:395)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:327)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1255)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1243)
+	at net.yunyi.back.BackApplication.main(BackApplication.java:12)
+Caused by: java.lang.NoSuchMethodError: org.springframework.plugin.core.PluginRegistry.getPluginFor(Ljava/lang/Object;)Ljava/util/Optional;
+	at springfox.documentation.schema.plugins.SchemaPluginsManager.viewProvider(SchemaPluginsManager.java:95)
+	at springfox.documentation.spring.web.readers.operation.OperationModelsProvider.viewForReturn(OperationModelsProvider.java:116)
+	at springfox.documentation.spring.web.readers.operation.OperationModelsProvider.collectFromReturnType(OperationModelsProvider.java:85)
+	at springfox.documentation.spring.web.readers.operation.OperationModelsProvider.apply(OperationModelsProvider.java:58)
+	at springfox.documentation.spring.web.plugins.DocumentationPluginsManager.modelContexts(DocumentationPluginsManager.java:160)
+	at springfox.documentation.spring.web.scanners.ApiModelReader.read(ApiModelReader.java:87)
+	at springfox.documentation.spring.web.scanners.ApiListingScanner.scan(ApiListingScanner.java:154)
+	at springfox.documentation.spring.web.scanners.ApiDocumentationScanner.scan(ApiDocumentationScanner.java:67)
+	at springfox.documentation.spring.web.plugins.AbstractDocumentationPluginsBootstrapper.scanDocumentation(AbstractDocumentationPluginsBootstrapper.java:96)
+	at springfox.documentation.spring.web.plugins.AbstractDocumentationPluginsBootstrapper.bootstrapDocumentationPlugins(AbstractDocumentationPluginsBootstrapper.java:82)
+	at springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper.start(DocumentationPluginsBootstrapper.java:100)
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:181)
+	... 14 common frames omitted
