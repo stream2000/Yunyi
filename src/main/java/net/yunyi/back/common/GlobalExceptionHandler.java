@@ -39,7 +39,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public ApiResult exceptionHandler(HttpServletRequest req, Exception e) {
+        e.printStackTrace();
         logger.error("Unknown exception, caused by {}", e.toString());
-        return ApiResult.error(YunyiCommonEnum.INTERNAL_SERVER_ERROR);
+        BizException bizException = new BizException(YunyiCommonEnum.INTERNAL_SERVER_ERROR, e);
+        return ApiResult.error(bizException.getErrorCode(), e.getMessage());
     }
 }

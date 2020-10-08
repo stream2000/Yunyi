@@ -28,6 +28,10 @@ public class JWTUtils {
     private static RSAPrivateKey priKey;
     private static RSAPublicKey pubKey;
 
+    static {
+        getInstance();
+    }
+
     public synchronized static JWTUtils getInstance(String modulus, String privateExponent,
         String publicExponent) {
         if (priKey == null && pubKey == null) {
@@ -70,9 +74,10 @@ public class JWTUtils {
      * @param uid 用户ID
      * @return
      */
-    public static String getToken(String uid) {
+    public static String getToken(long uid) {
+        String uidStr = String.valueOf(uid);
         long endTime = System.currentTimeMillis() + 1000 * 60 * 1440;
-        return Jwts.builder().setSubject(uid).setExpiration(new Date(endTime))
+        return Jwts.builder().setSubject(uidStr).setExpiration(new Date(endTime))
             .signWith(SignatureAlgorithm.RS512, priKey).compact();
     }
 
@@ -82,11 +87,11 @@ public class JWTUtils {
      * @param token
      * @return JWTResult
      */
-    public String checkToken(String token) {
+    public long checkToken(String token) {
         try {
             Claims claims = Jwts.parser().setSigningKey(pubKey).parseClaimsJws(token).getBody();
             String sub = claims.get("sub", String.class);
-            return sub;
+            return Long.parseLong(sub);
         } catch (ExpiredJwtException e) {
             // 在解析JWT字符串时，如果‘过期时间字段’已经早于当前时间，将会抛出ExpiredJwtException异常，说明本次请求已经失效
             throw new BizException(401, "token已过期", e);

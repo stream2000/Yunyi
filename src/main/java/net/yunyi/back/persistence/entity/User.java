@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
  * </p>
  *
  * @author stream2000
- * @since 2020-10-07
+ * @since 2020-10-08
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -40,6 +40,8 @@ public class User implements Serializable {
      * 邮箱
      */
     private String email;
+
+    private String phone;
 
 
 }

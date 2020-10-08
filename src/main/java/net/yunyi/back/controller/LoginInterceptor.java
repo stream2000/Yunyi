@@ -7,11 +7,17 @@ import net.yunyi.back.common.BizException;
 import net.yunyi.back.common.LoginRequired;
 import net.yunyi.back.common.auth.JWTUtils;
 import net.yunyi.back.common.response.YunyiCommonEnum;
+import net.yunyi.back.persistence.entity.User;
+import net.yunyi.back.persistence.service.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class LoginInterceptor extends HandlerInterceptorAdapter {
+
+    @Autowired
+    IUserService userService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
@@ -33,8 +39,12 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             if (!StringUtils.hasText(token)) {
                 throw new BizException(YunyiCommonEnum.AUTH);
             }
-            String jwt = JWTUtils.getInstance().checkToken(token);
-            request.setAttribute("uid", jwt);
+            long uid = JWTUtils.getInstance().checkToken(token);
+            User user = userService.getById(uid);
+            if (user == null) {
+                throw new BizException(YunyiCommonEnum.AUTH_USER_NOT_FOUND);
+            }
+            request.setAttribute("user", user);
             return true;
         }
         return true;

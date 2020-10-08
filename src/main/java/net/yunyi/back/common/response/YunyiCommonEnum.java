@@ -9,7 +9,9 @@ public enum YunyiCommonEnum implements BaseErrorInfoInterface {
     INTERNAL_SERVER_ERROR(500, "internal server error!"),
     SERVER_BUSY(503, "server is under strong traffic, please retry later"),
     NO_TOKEN(401, "No jwt token presents"),
-    AUTH(401, "JWT AUTH ERROR");
+    AUTH(401, "JWT AUTH ERROR"),
+    AUTH_USER_NOT_FOUND(401, "JWT AUTH ERROR"),
+    Unknown(400, "unknown");
 
     /**
      * 错误码
