@@ -3,6 +3,7 @@ package net.yunyi.back.common.response;
 public enum YunyiCommonEnum implements BaseErrorInfoInterface {
     // 数据操作错误定义
     SUCCESS(200, "success"),
+    INVALID_REQUEST(400, "bad request"),
     BODY_NOT_MATCH(400, "invalid request format"),
     SIGNATURE_NOT_MATCH(401, "signature not match"),
     NOT_FOUND(404, "resource not found"),

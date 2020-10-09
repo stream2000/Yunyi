@@ -1,8 +1,7 @@
 package net.yunyi.back.controller;
 
 import net.yunyi.back.common.response.ApiResult;
-import net.yunyi.back.persistence.service.IUserService;
-import net.yunyi.back.persistence.vo.LoginVo;
+import net.yunyi.back.persistence.service.ISmsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,18 +10,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/login")
-public class LoginController {
+@RequestMapping("/sms")
+public class SmsController {
 
     @Autowired
-    IUserService userService;
+    ISmsService smsService;
 
-    // TODO add some validation logic
-    @GetMapping("/captcha")
+    @GetMapping
     @ResponseBody
-    public ApiResult<LoginVo> registerThenLoginByCaptcha(@RequestParam String requestId,
-        @RequestParam String captcha) {
-        return userService.registerAndLoginByCaptcha(requestId, captcha);
+    public ApiResult<String> getCaptcha(@RequestParam String phone) {
+        return ApiResult.ok(smsService.sendCaptcha(phone));
     }
 
 }

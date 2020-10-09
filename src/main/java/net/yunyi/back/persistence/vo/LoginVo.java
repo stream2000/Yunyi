@@ -8,4 +8,5 @@ public class LoginVo {
 
     private User user;
     private String jwt;
+    private boolean newUser;
 }

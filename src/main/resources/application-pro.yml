@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/yunyi?useUnicode=yes&characterEncoding=UTF8
+    username: root
+    password: mysql449
+  redis:
+    database: 0
+    port: 6379
+    host: 127.0.0.1
+
+mybatis-plus:
+  mapper-locations: classpath:/*Mapper.xml
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: info
+    net.yunyi.back.persistence.mapper: debug
+  file:
+    path: logs/
+server:
+  port: 8090
+tencent:
+  secret:
+    id: ${secretID}
+    key: ${secretKey}
+    tempID: ${templateID}
+    appId: ${appID}
+    sign: ${sign}

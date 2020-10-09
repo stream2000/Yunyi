@@ -14,5 +14,5 @@ import net.yunyi.back.persistence.vo.LoginVo;
  * @since 2020-10-07
  */
 public interface IUserService extends IService<User> {
-    ApiResult<LoginVo> registerAndLoginByCaptcha(String phone, String captcha);
+    ApiResult<LoginVo> registerAndLoginByCaptcha(String requestId, String captcha);
 }

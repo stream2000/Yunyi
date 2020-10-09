@@ -3,12 +3,16 @@ package net.yunyi.back.persistence.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.util.UUID;
+import net.yunyi.back.common.BizException;
 import net.yunyi.back.common.auth.JWTUtils;
 import net.yunyi.back.common.response.ApiResult;
+import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.User;
 import net.yunyi.back.persistence.mapper.UserMapper;
+import net.yunyi.back.persistence.service.ISmsService;
 import net.yunyi.back.persistence.service.IUserService;
 import net.yunyi.back.persistence.vo.LoginVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,10 +26,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
+    @Autowired
+    ISmsService smsService;
+
     @Override
-    public ApiResult<LoginVo> registerAndLoginByCaptcha(String phone, String captcha) {
-        // TODO check captcha
-        User user = getOne(new QueryWrapper<User>().eq("phone", phone));
+    public ApiResult<LoginVo> registerAndLoginByCaptcha(String requestId, String captcha) {
+        // TODO implement check captcha
+        String phone = smsService.checkCaptcha(requestId, captcha);
+        if (phone == null) {
+            throw new BizException(YunyiCommonEnum.AUTH.getResultCode(), "wrong captcha code");
+        }
+        LoginVo vo = new LoginVo();
+        User user = getOne(new QueryWrapper<User>().eq("phone", requestId));
         if (user == null) {
             user = new User();
             user.setAge(0);
@@ -33,9 +45,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             String id = UUID.randomUUID().toString();
             user.setName("user-" + id);
             baseMapper.insert(user);
+            vo.setNewUser(true);
         }
-        LoginVo vo = new LoginVo();
-        Long id = user.getId();
         String token = JWTUtils.getInstance().getToken(user.getId());
         vo.setJwt(token);
         vo.setUser(user);
