@@ -21,7 +21,7 @@ logging:
   file:
     path: logs/
 server:
-  port: 9999
+  port: 8090
 tencent:
   secret:
     id: ${secretID}

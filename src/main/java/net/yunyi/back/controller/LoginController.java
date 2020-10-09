@@ -1,5 +1,6 @@
 package net.yunyi.back.controller;
 
+import io.swagger.annotations.ApiOperation;
 import net.yunyi.back.common.response.ApiResult;
 import net.yunyi.back.persistence.service.IUserService;
 import net.yunyi.back.persistence.vo.LoginVo;
@@ -17,9 +18,9 @@ public class LoginController {
     @Autowired
     IUserService userService;
 
-    // TODO add some validation logic
     @GetMapping("/captcha")
     @ResponseBody
+    @ApiOperation(value = "验证码登录/注册接口", notes = "request id为取验证码接口的返回值")
     public ApiResult<LoginVo> registerThenLoginByCaptcha(@RequestParam String requestId,
         @RequestParam String captcha) {
         return userService.registerAndLoginByCaptcha(requestId, captcha);

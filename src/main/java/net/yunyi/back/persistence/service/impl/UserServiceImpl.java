@@ -2,6 +2,10 @@ package net.yunyi.back.persistence.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import java.util.UUID;
 import net.yunyi.back.common.BizException;
 import net.yunyi.back.common.auth.JWTUtils;

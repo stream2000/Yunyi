@@ -1,6 +1,7 @@
 package net.yunyi.back.controller;
 
 
+import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import net.yunyi.back.common.BizException;
 import net.yunyi.back.common.LoginRequired;
@@ -39,12 +40,14 @@ public class UserController {
     @GetMapping("list")
     @ResponseBody
     @LoginRequired
+    @ApiOperation("获取用户列表，需要登录，用于验证登录功能")
     public ApiResult<List<User>> getUserList() {
         return ApiResult.ok(userService.list());
     }
 
     @GetMapping("id")
     @ResponseBody
+    @ApiOperation("获取单个用户，不需要登录")
     public ApiResult<User> getUserById(@RequestParam int id) {
         return ApiResult.ok(userService.getById(id));
     }
