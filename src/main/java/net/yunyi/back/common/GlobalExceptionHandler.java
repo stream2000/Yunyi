@@ -1,6 +1,7 @@
 package net.yunyi.back.common;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import net.yunyi.back.common.response.ApiResult;
 import net.yunyi.back.common.response.YunyiCommonEnum;
 import org.slf4j.Logger;
@@ -39,8 +40,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public ApiResult exceptionHandler(HttpServletRequest req, Exception e) {
-        logger.error("Unknown exception, caused by {}", e.toString());
-        BizException bizException = new BizException(YunyiCommonEnum.INTERNAL_SERVER_ERROR, e);
-        return ApiResult.error(bizException.getErrorCode(), e.getMessage());
+        int errorCode;
+        String errorMsg;
+        if (e instanceof ConstraintViolationException) {
+            errorCode = YunyiCommonEnum.INVALID_REQUEST.getResultCode();
+            errorMsg = "invalid input param: " + e.getMessage();
+        } else {
+            errorCode = YunyiCommonEnum.INTERNAL_SERVER_ERROR.getResultCode();
+            errorMsg = YunyiCommonEnum.INTERNAL_SERVER_ERROR.getResultMsg();
+        }
+        return ApiResult.error(errorCode, errorMsg);
     }
 }

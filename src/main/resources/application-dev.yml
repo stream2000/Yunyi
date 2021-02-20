@@ -15,6 +15,9 @@ mybatis-plus:
 
 logging:
   config: classpath:logback-spring.xml
+  pattern:
+    console: "%date [%level] [%thread] %logger{60} [%file : %line] %msg%n"
+    file: "%date [%level] [%thread] %logger{60} [%file : %line] %msg%n"
   level:
     root: info
     net.yunyi.back.persistence.mapper: debug

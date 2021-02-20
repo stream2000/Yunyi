@@ -120,6 +120,11 @@
       <groupId>com.tencentcloudapi</groupId>
       <version>3.1.62</version><!-- 注：这里只是示例版本号，请获取并替换为 最新的版本号 -->
     </dependency>
+    <dependency>
+      <groupId>org.hibernate.validator</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>6.0.17.Final</version>
+    </dependency>
   </dependencies>
   <description>Backend project of yunyi.net</description>
   <groupId>net.yunyi</groupId>
