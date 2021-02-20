@@ -2,7 +2,6 @@ package net.yunyi.back.persistence.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sun.istack.internal.NotNull;
 import java.util.UUID;
 import net.yunyi.back.common.BizException;
 import net.yunyi.back.common.auth.JWTUtils;
@@ -31,8 +30,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     ISmsService smsService;
 
     @Override
-    public ApiResult<LoginVo> registerAndLoginByCaptcha(@NotNull String requestId,
-        @NotNull String captcha) {
+    public ApiResult<LoginVo> registerAndLoginByCaptcha(String requestId,
+        String captcha) {
         String phone = smsService.checkCaptcha(requestId, captcha);
         if (phone == null) {
             throw new BizException(YunyiCommonEnum.AUTH.getResultCode(), "wrong captcha code");
