@@ -96,7 +96,6 @@ public class ComUtil {
     }
 
 
-
     public static String trim(String aStr) {
         if (aStr == null) {
             return "";

@@ -14,7 +14,7 @@ class SendSmsUtilTest {
     void sendSms() {
         String phone = "+8617721260791";
         try {
-            SendSmsResponse response = SendSmsUtil.sendSms(phone , "1234");
+            SendSmsResponse response = SendSmsUtil.sendSms(phone, "1234");
             System.out.println(response);
         } catch (Exception e) {
             e.printStackTrace();

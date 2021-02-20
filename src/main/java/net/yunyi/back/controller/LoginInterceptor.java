@@ -21,13 +21,10 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-        Object handler)
-        throws Exception {
+        Object handler) throws Exception {
         // cors
-        response
-            .setHeader("Access-control-Allow-Origin", request.getHeader("Origin"));
-        response
-            .setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+        response.setHeader("Access-control-Allow-Origin", request.getHeader("Origin"));
+        response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
         response.setHeader("Access-Control-Allow-Headers",
             request.getHeader("Access-Control-Request-Headers"));
         // 如果不是映射到方法直接通过
