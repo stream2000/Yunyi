@@ -1,6 +1,5 @@
 package net.yunyi.back.common.util;
 
-
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -83,7 +82,6 @@ public class JsonUtil {
         return vmap;
 
     }
-
 
     public static <T> List<T> readJson2Array(String json, Class<T> clz) {
         JsonArray array = new JsonParser().parse(json).getAsJsonArray();

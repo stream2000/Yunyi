@@ -57,15 +57,11 @@ public class RedisServiceImpl implements IRedisService {
     public void del(final String key) throws Exception {
         Assert.hasText(key, "Key is not empty.");
 
-        redisTemplate.execute(new RedisCallback<Long>() {
-            @Override
-            public Long doInRedis(RedisConnection conn) throws DataAccessException {
-                RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                return conn.del(serializer.serialize(key));
-            }
+        redisTemplate.execute((RedisCallback<Long>) conn -> {
+            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+            return conn.del(serializer.serialize(key));
         });
     }
-
 
     @Override
     public boolean expire(final String key, long expire) {
@@ -98,16 +94,12 @@ public class RedisServiceImpl implements IRedisService {
         Assert.hasText(key, "Key is not empty.");
 
         final String value = JsonUtil.getJsonString(obj);
-        long result = redisTemplate.execute(new RedisCallback<Long>() {
-            @Override
-            public Long doInRedis(RedisConnection connection) throws DataAccessException {
-                RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                long count = connection
-                    .lPush(serializer.serialize(key), serializer.serialize(value));
-                return count;
-            }
+        Long result = redisTemplate.execute((RedisCallback<Long>) connection -> {
+            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+            long count = connection.lPush(serializer.serialize(key), serializer.serialize(value));
+            return count;
         });
-        return result;
+        return result != null ? result : -1;
     }
 
     @Override
@@ -197,13 +189,10 @@ public class RedisServiceImpl implements IRedisService {
     public String lpop(final String key) throws Exception {
         Assert.hasText(key, "Key is not empty.");
 
-        String result = redisTemplate.execute(new RedisCallback<String>() {
-            @Override
-            public String doInRedis(RedisConnection connection) throws DataAccessException {
-                RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                byte[] res = connection.lPop(serializer.serialize(key));
-                return serializer.deserialize(res);
-            }
+        String result = redisTemplate.execute((RedisCallback<String>) connection -> {
+            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+            byte[] res = connection.lPop(serializer.serialize(key));
+            return serializer.deserialize(res);
         });
         return result;
     }

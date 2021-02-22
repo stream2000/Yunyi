@@ -29,9 +29,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Autowired
     ISmsService smsService;
 
+    public UserServiceImpl(ISmsService smsService) {
+        this.smsService = smsService;
+    }
+
     @Override
-    public ApiResult<LoginVo> registerAndLoginByCaptcha(String requestId,
-        String captcha) {
+    public ApiResult<LoginVo> registerAndLoginByCaptcha(String requestId, String captcha) {
         String phone = smsService.checkCaptcha(requestId, captcha);
         if (phone == null) {
             throw new BizException(YunyiCommonEnum.AUTH.getResultCode(), "wrong captcha code");

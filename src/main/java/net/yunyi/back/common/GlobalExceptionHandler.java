@@ -24,11 +24,11 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = BizException.class)
     @ResponseBody
-    public ApiResult bizExceptionHandler(HttpServletRequest req, BizException e) {
+    public ApiResult bizExceptionHandler(
+        HttpServletRequest req, BizException e) {
         logger.error("Business exception, caused by {} ", e.getErrorMsg());
         return ApiResult.error(e.getErrorCode(), e.getErrorMsg());
     }
-
 
     /**
      * 处理其他异常
@@ -39,7 +39,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public ApiResult exceptionHandler(HttpServletRequest req, Exception e) {
+    public ApiResult exceptionHandler(HttpServletRequest req,
+        Exception e) {
         int errorCode;
         String errorMsg;
         if (e instanceof ConstraintViolationException) {

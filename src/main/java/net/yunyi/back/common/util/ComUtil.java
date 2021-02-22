@@ -55,7 +55,6 @@ public class ComUtil {
         return false;
     }
 
-
     public static boolean isEmpty(Date aDate) {
         if (aDate == null) {
             return true;
@@ -71,7 +70,6 @@ public class ComUtil {
             return false;
         }
     }
-
 
     public static boolean isEmpty(Map m) {
         if (m == null || m.size() == 0) {
@@ -95,7 +93,6 @@ public class ComUtil {
         }
     }
 
-
     public static String trim(String aStr) {
         if (aStr == null) {
             return "";
@@ -111,7 +108,6 @@ public class ComUtil {
             return false;
         }
     }
-
 
     public static boolean equals(String str1, String str2) {
         return str1 != null ? str1.equals(str2) : str2 == null;

@@ -48,7 +48,6 @@ public class BizException extends RuntimeException {
         this.errorMsg = errorMsg;
     }
 
-
     public int getErrorCode() {
         return errorCode;
     }

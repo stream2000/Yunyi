@@ -48,22 +48,22 @@ public class CodeGenerator {
         gc.setOutputDir(projectPath + "/tmp/");
         gc.setAuthor("stream2000");
         gc.setOpen(false);
-//        gc.setSwagger2(true); //实体属性 Swagger2 注解
+        //        gc.setSwagger2(true); //实体属性 Swagger2 注解
         mpg.setGlobalConfig(gc);
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
         dsc.setUrl(
-            "jdbc:mysql://127.0.0.1:3306/yunyi?useUnicode=true&useSSL=false&characterEncoding=utf8");
+            "jdbc:mysql://127.0.0.1:3306/yunyi?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true");
         // dsc.setSchemaName("public");
-        dsc.setDriverName("com.mysql.jdbc.Driver");
+        dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
         dsc.setPassword("123456");
         mpg.setDataSource(dsc);
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-//        pc.setModuleName(scanner("模块名"));
+        //        pc.setModuleName(scanner("模块名"));
         pc.setParent("net.yunyi.back");
         pc.setServiceImpl("persistence.service.impl");
         pc.setEntity("persistence.entity");
@@ -81,7 +81,7 @@ public class CodeGenerator {
         };
 
         // 如果模板引擎是 freemarker
-//        String templatePath = "/templates/mapper.xml.ftl";
+        //        String templatePath = "/templates/mapper.xml.ftl";
         // 如果模板引擎是 velocity
         String templatePath = "/templates/mapper.xml.vm";
 
@@ -92,8 +92,9 @@ public class CodeGenerator {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！
-                return projectPath + "/src/main/resources/mapper/" /*+ pc.getModuleName()*/
-                    + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
+                return projectPath + "/src/main/resources/mapper/" /*+ pc.getModuleName()*/ + "/"
+                    + tableInfo
+                    .getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
         });
 
@@ -128,23 +129,23 @@ public class CodeGenerator {
         StrategyConfig strategy = new StrategyConfig();
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
-//        strategy.setSuperEntityClass("com.domain.hello.mybatisplus.common.BaseEntity");
+        //        strategy.setSuperEntityClass("com.domain.hello.mybatisplus.common.BaseEntity");
         strategy.setEntityLombokModel(true);
-//        strategy.setRestControllerStyle(true);
+        //        strategy.setRestControllerStyle(true);
         // 公共父类
-//        strategy.setSuperControllerClass("com.domain.hello.mybatisplus.common.BaseController");
+        //        strategy.setSuperControllerClass("com.domain.hello.mybatisplus.common.BaseController");
         // 写于父类中的公共字段
-//        strategy.setSuperEntityColumns("id");
+        //        strategy.setSuperEntityColumns("id");
         strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
         strategy.setControllerMappingHyphenStyle(true);
-//        strategy.setTablePrefix(pc.getModuleName() + "_");
+        //        strategy.setTablePrefix(pc.getModuleName() + "_");
         mpg.setStrategy(strategy);
 
-//        strategy.setRestControllerStyle(false);
-//        strategy.setSuperServiceClass(null);
+        //        strategy.setRestControllerStyle(false);
+        //        strategy.setSuperServiceClass(null);
 
-//        mpg.setTemplateEngine(new FreemarkerTemplateEngine());
-//        mpg.setTemplateEngine(new VelocityTemplateEngine());
+        //        mpg.setTemplateEngine(new FreemarkerTemplateEngine());
+        //        mpg.setTemplateEngine(new VelocityTemplateEngine());
         mpg.execute();
     }
 

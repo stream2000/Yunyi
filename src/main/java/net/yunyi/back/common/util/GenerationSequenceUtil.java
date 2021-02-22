@@ -19,7 +19,6 @@ import org.apache.commons.lang3.RandomStringUtils;
  */
 public class GenerationSequenceUtil {
 
-
     /**
      * 机器码 加 进程号 会导致生成的序列号很长, 基于这两个值做一些截取
      */
@@ -90,7 +89,7 @@ public class GenerationSequenceUtil {
     }
 
     public static void main(String[] args) {
-//        System.out.println(GenerationSequenceUtil.SnowflakeIdWorker.getNextValue());
+        //        System.out.println(GenerationSequenceUtil.SnowflakeIdWorker.getNextValue());
         System.out.println(generateUUID("menu"));
     }
 
@@ -112,7 +111,6 @@ public class GenerationSequenceUtil {
     public static String globalUniqueId(final String userId) {
         return globalUniqueId() + userId;
     }
-
 
     /**
      * (机器码 + 进程号) + 随机数 + 时间 + 计数器
@@ -142,7 +140,6 @@ public class GenerationSequenceUtil {
         LONG_ADDER.increment();
         return next;
     }
-
 
     // 创建机器标识符
     private static int createMachineIdentifier() {
@@ -221,9 +218,9 @@ public class GenerationSequenceUtil {
             long timestamp = timeGen();
 
             if (timestamp < lastTimestamp) {
-                throw new RuntimeException(String.format(
-                    "Clock moved backwards.  Refusing to generate id for %d milliseconds",
-                    lastTimestamp - timestamp));
+                throw new RuntimeException(String
+                    .format("Clock moved backwards.  Refusing to generate id for %d milliseconds",
+                        lastTimestamp - timestamp));
             }
 
             if (lastTimestamp == timestamp) {
@@ -238,8 +235,8 @@ public class GenerationSequenceUtil {
             lastTimestamp = timestamp;
 
             return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId
-                << datacenterIdShift)
-                | (workerId << workerIdShift) | sequence;
+                << datacenterIdShift) | (workerId
+                << workerIdShift) | sequence;
         }
 
         protected static long tilNextMillis(long lastTimestamp) {
