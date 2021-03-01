@@ -1,12 +1,5 @@
 package net.yunyi.back.persistence.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import net.yunyi.back.common.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -17,183 +10,187 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 @Service
 public class RedisServiceImpl implements IRedisService {
 
-    @Autowired
-    private RedisTemplate<String, ?> redisTemplate;
+	@Autowired
+	private RedisTemplate<String, ?> redisTemplate;
 
-    @Override
-    public boolean set(final String key, final String value) throws Exception {
-        Assert.hasText(key, "Key is not empty.");
-        Boolean result = redisTemplate.execute((RedisCallback<Boolean>) connection -> {
-            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-            connection.set(Objects.requireNonNull(serializer.serialize(key)),
-                Objects.requireNonNull(serializer.serialize(value)));
-            return true;
-        });
+	@Override
+	public boolean set(final String key, final String value) throws Exception {
+		Assert.hasText(key, "Key is not empty.");
+		Boolean result = redisTemplate.execute((RedisCallback<Boolean>) connection -> {
+			RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+			connection.set(Objects.requireNonNull(serializer.serialize(key)), Objects.requireNonNull(serializer.serialize(value)));
+			return true;
+		});
 
-        if (result == null) {
-            return false;
-        }
-        return result;
-    }
+		if (result == null) {
+			return false;
+		}
+		return result;
+	}
 
-    @Override
-    public String get(final String key) throws Exception {
-        Assert.hasText(key, "Key is not empty.");
-        String result = redisTemplate.execute(new RedisCallback<String>() {
-            @Override
-            public String doInRedis(RedisConnection connection) throws DataAccessException {
-                RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                byte[] value = connection.get(Objects.requireNonNull(serializer.serialize(key)));
-                return serializer.deserialize(value);
-            }
-        });
-        return result;
-    }
+	@Override
+	public String get(final String key) throws Exception {
+		Assert.hasText(key, "Key is not empty.");
+		String result = redisTemplate.execute(new RedisCallback<String>() {
+			@Override
+			public String doInRedis(RedisConnection connection) throws DataAccessException {
+				RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+				byte[] value = connection.get(Objects.requireNonNull(serializer.serialize(key)));
+				return serializer.deserialize(value);
+			}
+		});
+		return result;
+	}
 
-    @Override
-    public void del(final String key) throws Exception {
-        Assert.hasText(key, "Key is not empty.");
+	@Override
+	public boolean expire(final String key, long expire) {
+		return redisTemplate.expire(key, expire, TimeUnit.SECONDS);
+	}
 
-        redisTemplate.execute((RedisCallback<Long>) conn -> {
-            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-            return conn.del(serializer.serialize(key));
-        });
-    }
+	@Override
+	public <T> boolean setList(String key, List<T> list) throws Exception {
+		Assert.hasText(key, "Key is not empty.");
 
-    @Override
-    public boolean expire(final String key, long expire) {
-        return redisTemplate.expire(key, expire, TimeUnit.SECONDS);
-    }
+		String value = JsonUtil.getJsonString(list);
+		return set(key, value);
+	}
 
-    @Override
-    public <T> boolean setList(String key, List<T> list) throws Exception {
-        Assert.hasText(key, "Key is not empty.");
+	@Override
+	public <T> List<T> getList(String key, Class<T> clz) throws Exception {
 
-        String value = JsonUtil.getJsonString(list);
-        return set(key, value);
-    }
+		Assert.hasText(key, "Key is not empty.");
 
-    @Override
-    public <T> List<T> getList(String key, Class<T> clz) throws Exception {
+		String json = get(key);
+		if (json != null) {
+			List<T> list = JsonUtil.readJson2Array(json, clz);
+			return list;
+		}
+		return null;
+	}
 
-        Assert.hasText(key, "Key is not empty.");
+	@Override
+	public long lpush(final String key, Object obj) throws Exception {
+		Assert.hasText(key, "Key is not empty.");
 
-        String json = get(key);
-        if (json != null) {
-            List<T> list = JsonUtil.readJson2Array(json, clz);
-            return list;
-        }
-        return null;
-    }
+		final String value = JsonUtil.getJsonString(obj);
+		Long result = redisTemplate.execute((RedisCallback<Long>) connection -> {
+			RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+			long count = connection.lPush(serializer.serialize(key), serializer.serialize(value));
+			return count;
+		});
+		return result != null ? result : -1;
+	}
 
-    @Override
-    public long lpush(final String key, Object obj) throws Exception {
-        Assert.hasText(key, "Key is not empty.");
+	@Override
+	public long rpush(final String key, Object obj) throws Exception {
+		Assert.hasText(key, "Key is not empty.");
 
-        final String value = JsonUtil.getJsonString(obj);
-        Long result = redisTemplate.execute((RedisCallback<Long>) connection -> {
-            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-            long count = connection.lPush(serializer.serialize(key), serializer.serialize(value));
-            return count;
-        });
-        return result != null ? result : -1;
-    }
+		final String value = JsonUtil.getJsonString(obj);
+		long result = redisTemplate.execute(new RedisCallback<Long>() {
+			@Override
+			public Long doInRedis(RedisConnection connection) throws DataAccessException {
+				RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+				long count = connection.rPush(serializer.serialize(key), serializer.serialize(value));
+				return count;
+			}
+		});
+		return result;
+	}
 
-    @Override
-    public long rpush(final String key, Object obj) throws Exception {
-        Assert.hasText(key, "Key is not empty.");
+	@Override
+	public void hmset(String key, Object obj) throws Exception {
+		Assert.hasText(key, "Key is not empty.");
 
-        final String value = JsonUtil.getJsonString(obj);
-        long result = redisTemplate.execute(new RedisCallback<Long>() {
-            @Override
-            public Long doInRedis(RedisConnection connection) throws DataAccessException {
-                RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                long count = connection
-                    .rPush(serializer.serialize(key), serializer.serialize(value));
-                return count;
-            }
-        });
-        return result;
-    }
+		Map<byte[], byte[]> data = JsonUtil.readJsonByteMap(JsonUtil.getJsonString(obj));
+		redisTemplate.execute(new RedisCallback<String>() {
+			@Override
+			public String doInRedis(RedisConnection connection) throws DataAccessException {
+				RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+				connection.hMSet(serializer.serialize(key), data);
+				return "";
+			}
+		});
+	}
 
-    @Override
-    public void hmset(String key, Object obj) throws Exception {
-        Assert.hasText(key, "Key is not empty.");
+	@Override
+	public <T> T hget(String key, Class<T> clz) throws Exception {
+		Assert.hasText(key, "Key is not empty.");
 
-        Map<byte[], byte[]> data = JsonUtil.readJsonByteMap(JsonUtil.getJsonString(obj));
-        redisTemplate.execute(new RedisCallback<String>() {
-            @Override
-            public String doInRedis(RedisConnection connection) throws DataAccessException {
-                RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                connection.hMSet(serializer.serialize(key), data);
-                return "";
-            }
-        });
-    }
+		return redisTemplate.execute(new RedisCallback<T>() {
 
-    @Override
-    public <T> T hget(String key, Class<T> clz) throws Exception {
-        Assert.hasText(key, "Key is not empty.");
+			@Override
+			public T doInRedis(RedisConnection connection) throws DataAccessException {
+				RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
 
-        return redisTemplate.execute(new RedisCallback<T>() {
+				Map<String, Object> result;
 
-            @Override
-            public T doInRedis(RedisConnection connection) throws DataAccessException {
-                RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+				Map<byte[], byte[]> data = connection.hGetAll(serializer.serialize(key));
+				result = new HashMap<>();
+				for (Map.Entry<byte[], byte[]> entry : data.entrySet()) {
+					result.put(serializer.deserialize(entry.getKey()), serializer.deserialize(entry.getValue()));
+				}
 
-                Map<String, Object> result;
+				return JsonUtil.json2Obj(JsonUtil.getJsonString(result), clz);
+			}
+		});
+	}
 
-                Map<byte[], byte[]> data = connection.hGetAll(serializer.serialize(key));
-                result = new HashMap<>();
-                for (Map.Entry<byte[], byte[]> entry : data.entrySet()) {
-                    result.put(serializer.deserialize(entry.getKey()),
-                        serializer.deserialize(entry.getValue()));
-                }
+	@Override
+	public void del(final String key) throws Exception {
+		Assert.hasText(key, "Key is not empty.");
 
-                return JsonUtil.json2Obj(JsonUtil.getJsonString(result), clz);
-            }
-        });
-    }
+		redisTemplate.execute((RedisCallback<Long>) conn -> {
+			RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+			return conn.del(serializer.serialize(key));
+		});
+	}
 
-    @Override
-    public <T> List<T> hmGetAll(String key, Class<T> clz) throws Exception {
-        Assert.hasText(key, "Key is not empty.");
+	@Override
+	public <T> List<T> hmGetAll(String key, Class<T> clz) throws Exception {
+		Assert.hasText(key, "Key is not empty.");
 
-        List<Map<String, Object>> dataList = new ArrayList<>();
-        return redisTemplate.execute(new RedisCallback<List<T>>() {
-            @Override
-            public List<T> doInRedis(RedisConnection connection) throws DataAccessException {
-                RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+		List<Map<String, Object>> dataList = new ArrayList<>();
+		return redisTemplate.execute(new RedisCallback<List<T>>() {
+			@Override
+			public List<T> doInRedis(RedisConnection connection) throws DataAccessException {
+				RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
 
-                Set<String> keysSet = redisTemplate.keys(key);
-                Map<byte[], byte[]> data;
-                Map<String, Object> result;
-                for (String newKey : keysSet) {
-                    data = connection.hGetAll(serializer.serialize(newKey));
-                    result = new HashMap<>();
-                    for (Map.Entry<byte[], byte[]> entry : data.entrySet()) {
-                        result.put(serializer.deserialize(entry.getKey()),
-                            serializer.deserialize(entry.getValue()));
-                    }
-                    dataList.add(result);
-                }
-                return JsonUtil.readJson2Array(JsonUtil.getJsonString(dataList), clz);
-            }
-        });
-    }
+				Set<String> keysSet = redisTemplate.keys(key);
+				Map<byte[], byte[]> data;
+				Map<String, Object> result;
+				for (String newKey : keysSet) {
+					data = connection.hGetAll(serializer.serialize(newKey));
+					result = new HashMap<>();
+					for (Map.Entry<byte[], byte[]> entry : data.entrySet()) {
+						result.put(serializer.deserialize(entry.getKey()), serializer.deserialize(entry.getValue()));
+					}
+					dataList.add(result);
+				}
+				return JsonUtil.readJson2Array(JsonUtil.getJsonString(dataList), clz);
+			}
+		});
+	}
 
-    @Override
-    public String lpop(final String key) throws Exception {
-        Assert.hasText(key, "Key is not empty.");
+	@Override
+	public String lpop(final String key) throws Exception {
+		Assert.hasText(key, "Key is not empty.");
 
-        String result = redisTemplate.execute((RedisCallback<String>) connection -> {
-            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-            byte[] res = connection.lPop(serializer.serialize(key));
-            return serializer.deserialize(res);
-        });
-        return result;
-    }
+		String result = redisTemplate.execute((RedisCallback<String>) connection -> {
+			RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+			byte[] res = connection.lPop(serializer.serialize(key));
+			return serializer.deserialize(res);
+		});
+		return result;
+	}
 }

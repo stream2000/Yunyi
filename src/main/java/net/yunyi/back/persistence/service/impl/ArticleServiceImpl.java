@@ -19,11 +19,10 @@ import org.springframework.stereotype.Service;
  * @since 2021-02-22
  */
 @Service
-public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements
-    IArticleService {
+public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements IArticleService {
 
-    @Override
-    public IPage<ArticleVo> getArticle(Page<ArticleVo> page, QueryWrapper<ArticleVo> wrapper) {
-        return baseMapper.getArticleInfo(page, wrapper);
-    }
+	@Override
+	public IPage<ArticleVo> getArticle(Page<ArticleVo> page, QueryWrapper<ArticleVo> wrapper) {
+		return baseMapper.getArticleInfo(page, wrapper);
+	}
 }

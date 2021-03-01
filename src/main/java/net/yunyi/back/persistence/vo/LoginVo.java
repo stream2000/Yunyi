@@ -6,7 +6,7 @@ import net.yunyi.back.persistence.entity.User;
 @Data
 public class LoginVo {
 
-    private User user;
-    private String jwt;
-    private boolean newUser;
+	private User user;
+	private String jwt;
+	private boolean newUser;
 }

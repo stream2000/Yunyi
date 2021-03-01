@@ -10,14 +10,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 class SendSmsUtilTest {
 
-    @Test
-    void sendSms() {
-        String phone = "+8617721260791";
-        try {
-            SendSmsResponse response = SendSmsUtil.sendSms(phone, "1234");
-            System.out.println(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	@Test
+	void sendSms() {
+		String phone = "+8617721260791";
+		try {
+			SendSmsResponse response = SendSmsUtil.sendSms(phone, "1234");
+			System.out.println(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

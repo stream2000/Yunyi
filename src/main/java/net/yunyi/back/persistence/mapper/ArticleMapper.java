@@ -17,5 +17,5 @@ import net.yunyi.back.persistence.vo.ArticleVo;
  */
 public interface ArticleMapper extends BaseMapper<Article> {
 
-    IPage<ArticleVo> getArticleInfo(Page<?> page, QueryWrapper<ArticleVo> ew);
+	IPage<ArticleVo> getArticleInfo(Page<?> page, QueryWrapper<ArticleVo> ew);
 }
