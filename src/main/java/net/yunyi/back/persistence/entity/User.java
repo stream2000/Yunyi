@@ -13,36 +13,36 @@ import java.io.Serializable;
  * </p>
  *
  * @author stream2000
- * @since 2020-10-08
+ * @since 2021-03-01
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class User implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 主键ID
-	 */
-	@TableId(value = "id", type = IdType.AUTO)
-	private Long id;
+    /**
+     * 主键ID
+     */
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
-	/**
-	 * 姓名
-	 */
-	private String name;
+    /**
+     * 姓名
+     */
+    private String name;
 
-	/**
-	 * 年龄
-	 */
-	private Integer age;
+    /**
+     * 年龄
+     */
+    private Integer age;
 
-	/**
-	 * 邮箱
-	 */
-	private String email;
+    /**
+     * 邮箱
+     */
+    private String email;
 
-	private String phone;
+    private String phone;
 
 
 }

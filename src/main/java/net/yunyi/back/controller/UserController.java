@@ -62,8 +62,8 @@ public class UserController {
 	@ResponseBody
 	@ApiOperation("修改用户信息")
 	@LoginRequired
-	public void modifyUserInformation(@RequestAttribute("user") User user, @RequestBody ModifyUserParam modifyUserParam) {
-
+	public ApiResult<Boolean> modifyUserInformation(@RequestAttribute("user") User user, @RequestBody ModifyUserParam modifyUserParam) {
+		return userService.modifyUserInformation(user, modifyUserParam.getNickName(), modifyUserParam.getEmail(), modifyUserParam.getAge());
 	}
 
 

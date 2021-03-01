@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author stream2000
- * @since 2021-02-22
+ * @since 2021-03-01
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -22,14 +22,36 @@ public class Article implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * 文章主键，唯一自增id
+	 */
 	@TableId(value = "id", type = IdType.AUTO)
 	private Integer id;
 
+	/**
+	 * 上传者
+	 */
 	private Integer uploaderId;
 
+	/**
+	 * 标题
+	 */
 	private String title;
 
-	private String body;
+	/**
+	 * 翻译后的标题
+	 */
+	private String transTitle;
+
+	/**
+	 * 原文
+	 */
+	private String originalText;
+
+	/**
+	 * 类别
+	 */
+	private String genre;
 
 	/**
 	 * 创建时间

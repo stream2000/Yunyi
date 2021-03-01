@@ -11,6 +11,7 @@ import net.yunyi.back.persistence.mapper.UserMapper;
 import net.yunyi.back.persistence.service.ISmsService;
 import net.yunyi.back.persistence.service.IUserService;
 import net.yunyi.back.persistence.vo.LoginVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 			throw new BizException(YunyiCommonEnum.AUTH.getResultCode(), "wrong captcha code");
 		}
 		LoginVo vo = new LoginVo();
-		User user = getOne(new QueryWrapper<User>().eq("phone", requestId));
+		User user = getOne(new QueryWrapper<User>().eq("phone", phone));
 		if (user == null) {
 			user = new User();
 			user.setAge(0);
@@ -59,7 +60,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
 	@Override
 	public ApiResult<Boolean> modifyUserInformation(User user, String nickName, String email, int age) {
+		if (StringUtils.isNotBlank(nickName)) {
+			user.setName(nickName);
+		}
 
-		return null;
+		if (StringUtils.isNotBlank(email)) {
+			user.setEmail(email);
+		}
+
+		if (age > 0) {
+			user.setAge(age);
+		}
+		return ApiResult.ok(updateById(user));
 	}
 }
