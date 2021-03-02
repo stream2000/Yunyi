@@ -95,5 +95,12 @@ public class ArticleController {
 		}
 		return ApiResult.ok(article);
 	}
+
+	@PostMapping("/{articleId}/request_trans")
+	@ResponseBody
+	@LoginRequired
+	public ApiResult<Article> requestTrans(@PathVariable int articleId, @RequestAttribute("user") User user) {
+		return ApiResult.ok();
+	}
 }
 

@@ -21,6 +21,7 @@ public interface IArticleService extends IService<Article> {
 
 	Article modifyArticle(int articleId, String title, String transTitle, String originalText, String genre);
 
+	boolean requestTrans(int articleId, int userId);
 
 	IPage<ArticleVo> getArticles(Page<ArticleVo> page);
 

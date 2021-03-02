@@ -7,10 +7,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import net.yunyi.back.persistence.entity.Article;
 import net.yunyi.back.persistence.entity.ArticleLike;
 import net.yunyi.back.persistence.entity.ArticleStats;
+import net.yunyi.back.persistence.entity.RequestTrans;
 import net.yunyi.back.persistence.mapper.ArticleMapper;
 import net.yunyi.back.persistence.service.IArticleLikeService;
 import net.yunyi.back.persistence.service.IArticleService;
 import net.yunyi.back.persistence.service.IArticleStatsService;
+import net.yunyi.back.persistence.service.IRequestTransService;
 import net.yunyi.back.persistence.vo.ArticleVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
 	@Autowired
 	IArticleStatsService articleStatsService;
+
+	@Autowired
+	IRequestTransService requestTransService;
 
 	private static QueryWrapper<ArticleLike> queryLikeTableById(int articleId, int userId) {
 		return new QueryWrapper<ArticleLike>().eq("article_id", articleId).eq("user_id", userId);
@@ -71,6 +76,25 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 		}
 		updateById(article);
 		return article;
+	}
+
+	@Override
+	public boolean requestTrans(final int articleId, final int userId) {
+		QueryWrapper<RequestTrans> query = new QueryWrapper<RequestTrans>().eq("user_id", userId).eq("article_id", articleId);
+		if (requestTransService.getOne(query) != null) {
+			return true;
+		}
+		RequestTrans requestTrans = new RequestTrans();
+		requestTrans.setArticleId(articleId);
+		requestTrans.setUserId(userId);
+		requestTrans.setSolved(false);
+		requestTransService.save(requestTrans);
+		ArticleStats stats = articleStatsService.getById(articleId);
+		// todo: concurrent issue
+		int currentRequestTransNum = stats.getTransRequestNum() != null ? stats.getTransRequestNum() : 0;
+		stats.setTransRequestNum(currentRequestTransNum + 1);
+		articleStatsService.updateById(stats);
+		return true;
 	}
 
 	@Override
