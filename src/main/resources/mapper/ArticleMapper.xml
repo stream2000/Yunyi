@@ -2,10 +2,41 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.yunyi.back.persistence.mapper.ArticleMapper">
-    <select id="getArticleInfo" resultType="net.yunyi.back.persistence.vo.ArticleVo">
-        select u.id, u.name, a.title, a.body
+    <select id="getAllArticles" resultType="net.yunyi.back.persistence.vo.ArticleVo">
+        select u.name,
+               a.uploader_id,
+               a.title,
+               a.trans_title,
+               a.original_text,
+               a.genre,
+               a.has_trans,
+               stats.like_num,
+               stats.view_num,
+               stats.comment_num
         from user u
-                 join article a on a.uploader_id = u.id
+                 join article a
+                      on u.id = a.uploader_id
+                 join article_stats stats
+                      on a.id = stats.article_id
+    </select>
+
+    <select id="getArticleByQuery" resultType="net.yunyi.back.persistence.vo.ArticleVo">
+        select u.name,
+               a.uploader_id,
+               a.title,
+               a.trans_title,
+               a.original_text,
+               a.genre,
+               a.has_trans,
+               stats.like_num,
+               stats.view_num,
+               stats.comment_num
+        from user u
+                 join article a
+                      on u.id = a.uploader_id
+                 join article_stats stats
+                      on a.id = stats.article_id
             ${ew.customSqlSegment}
     </select>
+
 </mapper>

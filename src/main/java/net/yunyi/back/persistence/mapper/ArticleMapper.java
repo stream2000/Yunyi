@@ -1,11 +1,13 @@
 package net.yunyi.back.persistence.mapper;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.yunyi.back.persistence.entity.Article;
 import net.yunyi.back.persistence.vo.ArticleVo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -17,5 +19,7 @@ import net.yunyi.back.persistence.vo.ArticleVo;
  */
 public interface ArticleMapper extends BaseMapper<Article> {
 
-	IPage<ArticleVo> getArticleInfo(Page<?> page, QueryWrapper<ArticleVo> ew);
+	IPage<ArticleVo> getAllArticles(Page<?> page);
+
+	ArticleVo getArticleByQuery(@Param(Constants.WRAPPER) Wrapper<ArticleVo> ew);
 }

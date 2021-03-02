@@ -1,6 +1,8 @@
 package net.yunyi.back.persistence.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -56,11 +58,13 @@ public class Article implements Serializable {
 	/**
 	 * 创建时间
 	 */
+	@TableField(fill = FieldFill.INSERT) //新增有效
 	private LocalDateTime createTime;
 
 	/**
 	 * 最后一次修改时间
 	 */
+	@TableField(fill = FieldFill.INSERT_UPDATE) //新增有效
 	private LocalDateTime updateTime;
 
 

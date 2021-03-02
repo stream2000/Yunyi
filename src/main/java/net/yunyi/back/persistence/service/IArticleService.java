@@ -17,5 +17,17 @@ import net.yunyi.back.persistence.vo.ArticleVo;
  */
 public interface IArticleService extends IService<Article> {
 
-    IPage<ArticleVo> getArticle(Page<ArticleVo> page, QueryWrapper<ArticleVo> wrapper);
+	Article addArticle(int uploaderId, String title, String originalText, String genre);
+
+	Article modifyArticle(int articleId, String title, String transTitle, String originalText, String genre);
+
+
+	IPage<ArticleVo> getArticles(Page<ArticleVo> page);
+
+	ArticleVo getArticleByQuery(QueryWrapper<ArticleVo> queryWrapper);
+
+	boolean likeArticle(int articleId, final int userId);
+
+	boolean cancelLikeArticle(int articleId, final int userId);
+
 }
