@@ -17,6 +17,7 @@ import net.yunyi.back.persistence.vo.ArticleVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -43,6 +44,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
 	// TODO: store texts after splitting the article
 	@Override
+	@Transactional
 	public Article addArticle(final int uploaderId, final String title, final String originalText, final String genre) {
 		Article article = new Article();
 		article.setGenre(genre);
@@ -79,6 +81,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	}
 
 	@Override
+	@Transactional
 	public boolean requestTrans(final int articleId, final int userId) {
 		QueryWrapper<RequestTrans> query = new QueryWrapper<RequestTrans>().eq("user_id", userId).eq("article_id", articleId);
 		if (requestTransService.getOne(query) != null) {
@@ -108,6 +111,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	}
 
 	@Override
+	@Transactional
 	public boolean likeArticle(final int articleId, final int userId) {
 		QueryWrapper<ArticleLike> query = queryLikeTableById(articleId, userId);
 		if (articleLikeService.getOne(query) != null) {
@@ -126,6 +130,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	}
 
 	@Override
+	@Transactional
 	public boolean cancelLikeArticle(final int articleId, final int userId) {
 		QueryWrapper<ArticleLike> query = queryLikeTableById(articleId, userId);
 		if (articleLikeService.getOne(query) == null) {

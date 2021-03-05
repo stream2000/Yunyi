@@ -53,3 +53,16 @@ create table request_trans
     solved     bool,
     primary key (user_id, article_id)
 );
+
+drop table if exists article_comment;
+create table article_comment
+(
+    id               bigint auto_increment COMMENT '评论唯一自增id',
+    sender_id        int not null COMMENT '发送者id',
+    article_id       int not null COMMENT '评论文章id',
+    has_ref_comment  bool COMMENT '是否引用评论',
+    ref_comment_id   int COMMENT '评论引用的评论id',
+    has_ref_trans    bool COMMENT '是否引用翻译片段',
+    ref_seg_trans_id int COMMENT '引用翻译的id',
+    primary key (id)
+);
