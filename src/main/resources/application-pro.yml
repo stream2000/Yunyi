@@ -10,7 +10,7 @@ spring:
     host: 127.0.0.1
 
 mybatis-plus:
-  mapper-locations: classpath:/*Mapper.xml
+  mapper-locations: classpath:/mapper/*Mapper.xml
 
 logging:
   config: classpath:logback-spring.xml
