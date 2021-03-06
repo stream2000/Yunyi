@@ -54,6 +54,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 		save(article);
 		ArticleStats stats = new ArticleStats();
 		stats.setArticleId(article.getId());
+		stats.setLikeNum(0);
+		stats.setTransRequestNum(0);
+		stats.setCommentNum(0);
+		stats.setViewNum(0);
 		articleStatsService.save(stats);
 		return article;
 	}

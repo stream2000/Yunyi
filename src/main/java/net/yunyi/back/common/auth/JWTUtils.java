@@ -74,7 +74,7 @@ public class JWTUtils {
 	 */
 	public static String getToken(long uid) {
 		String uidStr = String.valueOf(uid);
-		long endTime = System.currentTimeMillis() + 1000 * 60 * 1440;
+		long endTime = System.currentTimeMillis() + 1000 * 60 * 1440 * 7;
 		return Jwts.builder().setSubject(uidStr).setExpiration(new Date(endTime)).signWith(SignatureAlgorithm.RS512, priKey).compact();
 	}
 

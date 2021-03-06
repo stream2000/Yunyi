@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -58,14 +58,14 @@ public class Article implements Serializable {
 	/**
 	 * 创建时间
 	 */
-	@TableField(fill = FieldFill.INSERT) //新增有效
-	private LocalDateTime createTime;
+	@TableField(value = "create_time", fill = FieldFill.INSERT) //新增有效
+	private Date createTime;
 
 	/**
 	 * 最后一次修改时间
 	 */
-	@TableField(fill = FieldFill.INSERT_UPDATE) //新增有效
-	private LocalDateTime updateTime;
+	@TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE) //新增有效
+	private Date updateTime;
 
 
 }

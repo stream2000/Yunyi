@@ -21,8 +21,8 @@ create table article
     original_text text         not null COMMENT '原文',
     genre         varchar(63)  not null COMMENT '类别',
     has_trans     boolean COMMENT '是否有翻译',
-    create_time   timestamp    NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    update_time   timestamp    NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后一次修改时间',
+    create_time   datetime     NULL COMMENT '创建时间',
+    update_time   datetime     NULL COMMENT '最后一次修改时间',
     primary key (id)
 ) charset = utf8mb4;
 
