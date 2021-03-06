@@ -1,4 +1,4 @@
-package net.yunyi.back.persistence.service;
+package net.yunyi.back.persistence.service.article;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -20,6 +20,8 @@ public interface IArticleService extends IService<Article> {
 	Article addArticle(int uploaderId, String title, String originalText, String genre);
 
 	Article modifyArticle(int articleId, String title, String transTitle, String originalText, String genre);
+
+	boolean deleteArticle(int articleId);
 
 	boolean requestTrans(int articleId, int userId);
 

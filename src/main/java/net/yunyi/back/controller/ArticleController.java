@@ -10,8 +10,11 @@ import net.yunyi.back.common.response.ApiResult;
 import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.Article;
 import net.yunyi.back.persistence.entity.User;
+import net.yunyi.back.persistence.param.AddArticleCommentParam;
 import net.yunyi.back.persistence.param.UploadArticleParam;
-import net.yunyi.back.persistence.service.IArticleService;
+import net.yunyi.back.persistence.service.article.IArticleCommentService;
+import net.yunyi.back.persistence.service.article.IArticleService;
+import net.yunyi.back.persistence.vo.ArticleCommentVo;
 import net.yunyi.back.persistence.vo.ArticleVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,6 +47,9 @@ public class ArticleController {
 	@Autowired
 	IArticleService articleService;
 
+	@Autowired
+	IArticleCommentService articleCommentService;
+
 	@GetMapping("/{id}")
 	@ResponseBody
 	@ApiOperation(value = "获取首页文章接口, 带分页")
@@ -60,7 +66,7 @@ public class ArticleController {
 		return ApiResult.ok(articles.getRecords());
 	}
 
-	@PostMapping("/like/{articleId}")
+	@PostMapping("/{articleId}/like")
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "点赞文章")
@@ -68,7 +74,7 @@ public class ArticleController {
 		return ApiResult.ok(articleService.likeArticle(articleId, user.getId().intValue()));
 	}
 
-	@PostMapping("/cancel_like/{articleId}")
+	@PostMapping("/{articleId}/cancel_like")
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "取消点赞文章")
@@ -96,11 +102,45 @@ public class ArticleController {
 		return ApiResult.ok(article);
 	}
 
+	@PostMapping("/{id}/delete")
+	@ResponseBody
+	@LoginRequired
+	public ApiResult<Boolean> removeArticle(@PathVariable int id, @RequestAttribute("user") User user) {
+		// TODO: add more validation here. For example, only member can delete the article
+		return ApiResult.ok(articleService.deleteArticle(id));
+	}
+
 	@PostMapping("/{articleId}/request_trans")
 	@ResponseBody
 	@LoginRequired
-	public ApiResult<Article> requestTrans(@PathVariable int articleId, @RequestAttribute("user") User user) {
-		return ApiResult.ok();
+	public ApiResult<Boolean> requestTrans(@PathVariable int articleId, @RequestAttribute("user") User user) {
+		return ApiResult.ok(articleService.requestTrans(articleId, user.getId().intValue()));
 	}
+
+
+	@PostMapping("/comment/add")
+	@ResponseBody
+	@LoginRequired
+	@ApiOperation(value = "添加原文页面评论")
+	public ApiResult<ArticleCommentVo> addArticleComment(@RequestAttribute(value = "user") User user, @RequestBody AddArticleCommentParam param) {
+		return ApiResult.ok(articleCommentService.addArticleComment(user.getId().intValue(), param.getArticleId(), param.getContent(), param.isHasRefComment(), param.getRefCommentId()));
+	}
+
+	@PostMapping("/comment/{id}/delete")
+	@ResponseBody
+	@LoginRequired
+	@ApiOperation(value = "添加原文页面评论")
+	public ApiResult<Boolean> deleteArticleComment(@PathVariable int id) {
+		return ApiResult.ok(articleCommentService.deleteArticleComment(id));
+	}
+
+	@GetMapping("/{id}/comments")
+	@ResponseBody
+	@ApiOperation(value = "添加原文页面评论")
+	public ApiResult<List<ArticleCommentVo>> getArticleComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id) {
+		return ApiResult.ok(articleCommentService.getArticleComment(new Page<>(pageId, pageSize), id).getRecords());
+	}
+
+
 }
 

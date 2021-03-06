@@ -12,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class UserController {
 		throw new BizException(YunyiCommonEnum.INTERNAL_SERVER_ERROR);
 	}
 
-	@GetMapping("list")
+	@GetMapping("all")
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation("获取用户列表，需要登录，用于验证登录功能")
@@ -51,10 +51,10 @@ public class UserController {
 		return ApiResult.ok(userService.list());
 	}
 
-	@GetMapping("id")
+	@GetMapping("/{id}")
 	@ResponseBody
 	@ApiOperation("获取单个用户，不需要登录")
-	public ApiResult<User> getUserById(@RequestParam int id) {
+	public ApiResult<User> getUserById(@PathVariable int id) {
 		return ApiResult.ok(userService.getById(id));
 	}
 

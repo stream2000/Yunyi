@@ -1,9 +1,9 @@
-package net.yunyi.back.persistence.service.impl;
+package net.yunyi.back.persistence.service.article.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import net.yunyi.back.persistence.entity.RequestTrans;
 import net.yunyi.back.persistence.mapper.RequestTransMapper;
-import net.yunyi.back.persistence.service.IRequestTransService;
+import net.yunyi.back.persistence.service.article.IRequestTransService;
 import org.springframework.stereotype.Service;
 
 /**

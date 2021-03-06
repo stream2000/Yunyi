@@ -1,4 +1,4 @@
-package net.yunyi.back.persistence.service;
+package net.yunyi.back.persistence.service.article;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import net.yunyi.back.persistence.entity.ArticleLike;

@@ -1,10 +1,10 @@
-package net.yunyi.back.persistence.service.impl;
+package net.yunyi.back.persistence.service.article.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import net.yunyi.back.persistence.entity.ArticleStats;
 import net.yunyi.back.persistence.mapper.ArticleStatsMapper;
-import net.yunyi.back.persistence.service.IArticleStatsService;
+import net.yunyi.back.persistence.service.article.IArticleStatsService;
 import org.springframework.stereotype.Service;
 
 /**
