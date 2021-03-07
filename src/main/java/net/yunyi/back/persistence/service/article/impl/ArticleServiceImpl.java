@@ -15,7 +15,7 @@ import net.yunyi.back.persistence.service.article.IArticleLikeService;
 import net.yunyi.back.persistence.service.article.IArticleService;
 import net.yunyi.back.persistence.service.article.IArticleStatsService;
 import net.yunyi.back.persistence.service.article.IRequestTransService;
-import net.yunyi.back.persistence.vo.ArticleVo;
+import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -123,12 +123,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	}
 
 	@Override
-	public IPage<ArticleVo> getArticles(Page<ArticleVo> page) {
-		return baseMapper.getAllArticles(page);
+	public IPage<ArticleListItemVo> getArticles(Page<ArticleListItemVo> page) {
+		return baseMapper.getAllArticles(page, new QueryWrapper<>());
 	}
 
 	@Override
-	public ArticleVo getArticleByQuery(final QueryWrapper<ArticleVo> queryWrapper) {
+	public IPage<ArticleListItemVo> getArticlesByGenre(final Page<ArticleListItemVo> page, final String genre) {
+		return baseMapper.getAllArticles(page, new QueryWrapper<ArticleListItemVo>().eq("a.genre", genre));
+	}
+
+	@Override
+	public ArticleListItemVo getArticleByQuery(final QueryWrapper<ArticleListItemVo> queryWrapper) {
 		return baseMapper.getArticleByQuery(queryWrapper);
 	}
 

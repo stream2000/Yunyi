@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.yunyi.back.persistence.entity.Article;
-import net.yunyi.back.persistence.vo.ArticleVo;
+import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -19,7 +19,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface ArticleMapper extends BaseMapper<Article> {
 
-	IPage<ArticleVo> getAllArticles(Page<?> page);
+	IPage<ArticleListItemVo> getAllArticles(Page<?> page, @Param(Constants.WRAPPER) Wrapper<ArticleListItemVo> ew);
 
-	ArticleVo getArticleByQuery(@Param(Constants.WRAPPER) Wrapper<ArticleVo> ew);
+	ArticleListItemVo getArticleByQuery(@Param(Constants.WRAPPER) Wrapper<ArticleListItemVo> ew);
 }

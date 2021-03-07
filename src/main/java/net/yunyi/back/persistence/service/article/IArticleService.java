@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import net.yunyi.back.persistence.entity.Article;
-import net.yunyi.back.persistence.vo.ArticleVo;
+import net.yunyi.back.persistence.vo.ArticleListItemVo;
 
 /**
  * <p>
@@ -25,9 +25,11 @@ public interface IArticleService extends IService<Article> {
 
 	boolean requestTrans(int articleId, int userId);
 
-	IPage<ArticleVo> getArticles(Page<ArticleVo> page);
+	IPage<ArticleListItemVo> getArticles(Page<ArticleListItemVo> page);
 
-	ArticleVo getArticleByQuery(QueryWrapper<ArticleVo> queryWrapper);
+	IPage<ArticleListItemVo> getArticlesByGenre(Page<ArticleListItemVo> page, String genre);
+
+	ArticleListItemVo getArticleByQuery(QueryWrapper<ArticleListItemVo> queryWrapper);
 
 	boolean likeArticle(int articleId, final int userId);
 

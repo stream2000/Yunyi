@@ -15,8 +15,11 @@ import net.yunyi.back.persistence.param.UploadArticleParam;
 import net.yunyi.back.persistence.service.article.IArticleCommentService;
 import net.yunyi.back.persistence.service.article.IArticleService;
 import net.yunyi.back.persistence.vo.ArticleCommentVo;
-import net.yunyi.back.persistence.vo.ArticleVo;
+import net.yunyi.back.persistence.vo.ArticleListItemVo;
+import net.yunyi.back.persistence.vo.NewsPageVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,17 +57,29 @@ public class ArticleController {
 	@GetMapping("/{id}")
 	@ResponseBody
 	@ApiOperation(value = "获取首页文章接口, 带分页")
-	public ApiResult<ArticleVo> getArticleById(@PathVariable int id) {
-		ArticleVo article = articleService.getArticleByQuery(new QueryWrapper<ArticleVo>().eq("a.id", id));
+	public ApiResult<ArticleListItemVo> getArticleById(@PathVariable int id) {
+		ArticleListItemVo article = articleService.getArticleByQuery(new QueryWrapper<ArticleListItemVo>().eq("a.id", id));
 		return ApiResult.ok(article);
 	}
 
 	@GetMapping("/all")
 	@ResponseBody
 	@ApiOperation(value = "获取首页文章接口, 带分页")
-	public ApiResult<List<ArticleVo>> getArticles(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize) {
-		IPage<ArticleVo> articles = articleService.getArticles(new Page<>(pageId, pageSize));
-		return ApiResult.ok(articles.getRecords());
+	public ApiResult<NewsPageVo> getArticles(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @Nullable @RequestParam final String genre) {
+		IPage<ArticleListItemVo> articles;
+		int articleCount;
+		if (StringUtils.isBlank(genre) || genre.equalsIgnoreCase("all")) {
+			articles = articleService.getArticles(new Page<>(pageId, pageSize));
+			articleCount = articleService.count();
+		} else {
+			articles = articleService.getArticlesByGenre(new Page<>(pageId, pageSize), genre);
+			articleCount = articleService.count(new QueryWrapper<Article>().eq("genre", genre));
+		}
+		int pageCount = articleCount / pageSize;
+		if (pageCount == 0) {
+			pageCount = 1;
+		}
+		return ApiResult.ok(new NewsPageVo(pageCount, articles.getRecords()));
 	}
 
 	@PostMapping("/{articleId}/like")
