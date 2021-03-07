@@ -2,7 +2,7 @@ package net.yunyi.back.controller;
 
 import io.swagger.annotations.ApiOperation;
 import net.yunyi.back.common.response.ApiResult;
-import net.yunyi.back.persistence.service.ISmsService;
+import net.yunyi.back.persistence.service.common.ISmsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;

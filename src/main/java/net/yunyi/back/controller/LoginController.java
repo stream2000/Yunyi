@@ -2,7 +2,7 @@ package net.yunyi.back.controller;
 
 import io.swagger.annotations.ApiOperation;
 import net.yunyi.back.common.response.ApiResult;
-import net.yunyi.back.persistence.service.IUserService;
+import net.yunyi.back.persistence.service.common.IUserService;
 import net.yunyi.back.persistence.vo.LoginVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

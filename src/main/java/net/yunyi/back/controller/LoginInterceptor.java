@@ -5,7 +5,7 @@ import net.yunyi.back.common.LoginRequired;
 import net.yunyi.back.common.auth.JWTUtils;
 import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.User;
-import net.yunyi.back.persistence.service.IUserService;
+import net.yunyi.back.persistence.service.common.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;

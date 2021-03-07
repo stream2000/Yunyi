@@ -1,7 +1,7 @@
-package net.yunyi.back.persistence.service.impl;
+package net.yunyi.back.persistence.service.common.impl;
 
 import net.yunyi.back.common.util.JsonUtil;
-import net.yunyi.back.persistence.service.IRedisService;
+import net.yunyi.back.persistence.service.common.IRedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;

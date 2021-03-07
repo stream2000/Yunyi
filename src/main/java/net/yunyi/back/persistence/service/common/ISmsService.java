@@ -1,4 +1,4 @@
-package net.yunyi.back.persistence.service;
+package net.yunyi.back.persistence.service.common;
 
 public interface ISmsService {
 

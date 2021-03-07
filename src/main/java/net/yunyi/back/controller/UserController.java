@@ -7,7 +7,7 @@ import net.yunyi.back.common.response.ApiResult;
 import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.User;
 import net.yunyi.back.persistence.param.ModifyUserParam;
-import net.yunyi.back.persistence.service.IUserService;
+import net.yunyi.back.persistence.service.common.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;

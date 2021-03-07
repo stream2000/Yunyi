@@ -8,7 +8,7 @@ create table user
     email varchar(50)  null comment '邮箱',
     phone varchar(20)  not null unique,
     primary key (id)
-) charset = utf8mb4;
+) COMMENT '用户表';
 
 
 drop table if exists article;
@@ -24,7 +24,7 @@ create table article
     create_time   datetime     NULL COMMENT '创建时间',
     update_time   datetime     NULL COMMENT '最后一次修改时间',
     primary key (id)
-) charset = utf8mb4;
+) COMMENT '原文表';
 
 drop table if exists article_stats;
 create table article_stats
@@ -35,7 +35,7 @@ create table article_stats
     comment_num       int,
     trans_request_num int,
     primary key (article_id)
-);
+) COMMENT '原文信息统计表';
 
 drop table if exists article_like;
 create table article_like
@@ -43,7 +43,7 @@ create table article_like
     article_id int,
     user_id    int,
     primary key (article_id, user_id)
-);
+) COMMENT '原文点赞表';
 
 drop table if exists request_trans;
 create table request_trans
@@ -66,4 +66,25 @@ create table article_comment
     content         text COMMENT '评论内容',
     create_time     datetime COMMENT '发送时间',
     primary key (id)
-);
+) COMMENT '原文评论表';
+
+drop table if exists article_text_seg;
+create table article_text_seg
+(
+    id              bigint auto_increment COMMENT '唯一id',
+    article_id      int COMMENT '原文id',
+    sequence_number int COMMENT '切分序号',
+    content         text COMMENT '切分内容',
+    primary key (id),
+    unique key (article_id, sequence_number)
+) COMMENT '原文切分表';
+
+drop table if exists article_trans;
+create table article_trans
+(
+    id             bigint auto_increment COMMENT '唯一id',
+    article_seg_id int COMMENT '对应原文切分的id',
+    trans_seq      int COMMENT '翻译序号',
+    content        text COMMENT '翻译内容',
+    primary key (id)
+) COMMENT '原文切分的翻译表';

@@ -1,4 +1,4 @@
-package net.yunyi.back.persistence.service.impl;
+package net.yunyi.back.persistence.service.common.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,8 +8,8 @@ import net.yunyi.back.common.response.ApiResult;
 import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.User;
 import net.yunyi.back.persistence.mapper.UserMapper;
-import net.yunyi.back.persistence.service.ISmsService;
-import net.yunyi.back.persistence.service.IUserService;
+import net.yunyi.back.persistence.service.common.ISmsService;
+import net.yunyi.back.persistence.service.common.IUserService;
 import net.yunyi.back.persistence.vo.LoginVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

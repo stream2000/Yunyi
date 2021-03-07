@@ -1,4 +1,4 @@
-package net.yunyi.back.persistence.service;
+package net.yunyi.back.persistence.service.common;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import net.yunyi.back.common.response.ApiResult;
