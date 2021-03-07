@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -138,7 +139,7 @@ public class ArticleController {
 	@ResponseBody
 	@ApiOperation(value = "添加原文页面评论")
 	public ApiResult<List<ArticleCommentVo>> getArticleComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id) {
-		return ApiResult.ok(articleCommentService.getArticleComment(new Page<>(pageId, pageSize), id).getRecords());
+		return ApiResult.ok(articleCommentService.getArticleComment(new Page<>(pageId, pageSize), id).getRecords().stream().sorted().collect(Collectors.toList()));
 	}
 
 
