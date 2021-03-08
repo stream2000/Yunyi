@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import net.yunyi.back.persistence.entity.Article;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务类
@@ -17,9 +19,9 @@ import net.yunyi.back.persistence.vo.ArticleListItemVo;
  */
 public interface IArticleService extends IService<Article> {
 
-	Article addArticle(int uploaderId, String title, String originalText, String genre);
+	Article addArticle(int uploaderId, String title, String originalText, String genre, final List<String> segments);
 
-	Article modifyArticle(int articleId, String title, String transTitle, String originalText, String genre);
+	Article modifyArticle(int articleId, String title, String transTitle, String originalText, String genre, final List<String> segments);
 
 	boolean deleteArticle(int articleId);
 

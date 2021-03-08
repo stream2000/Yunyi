@@ -20,22 +20,22 @@ import javax.validation.constraints.NotBlank;
 @RequestMapping("/login")
 public class LoginController {
 
-    @Autowired
-    IUserService userService;
+	@Autowired
+	IUserService userService;
 
-    @GetMapping("/captcha")
-    @ResponseBody
-    @ApiOperation(value = "验证码登录/注册接口", notes = "request id为取验证码接口的返回值")
-    public ApiResult<LoginVo> registerThenLoginByCaptcha(@RequestParam String requestId, @RequestParam String captcha) {
+	@GetMapping("/captcha")
+	@ResponseBody
+	@ApiOperation(value = "验证码登录/注册接口", notes = "request id为取验证码接口的返回值")
+	public ApiResult<LoginVo> registerThenLoginByCaptcha(@RequestParam String requestId, @RequestParam String captcha) {
 
-        return userService.registerAndLoginByCaptcha(requestId, captcha);
-    }
+		return userService.registerAndLoginByCaptcha(requestId, captcha);
+	}
 
-    @GetMapping("/password")
-    @ResponseBody
-    @ApiOperation(value = "密码登录接口")
-    public ApiResult<LoginVo> LoginByPassword(@RequestParam @NotBlank String requestId, @RequestParam @NotBlank @Digits(integer = 4, fraction = 0) String captcha) {
-        return userService.registerAndLoginByCaptcha(requestId, captcha);
-    }
+	@GetMapping("/password")
+	@ResponseBody
+	@ApiOperation(value = "密码登录接口")
+	public ApiResult<LoginVo> LoginByPassword(@RequestParam @NotBlank String requestId, @RequestParam @NotBlank @Digits(integer = 4, fraction = 0) String captcha) {
+		return userService.registerAndLoginByCaptcha(requestId, captcha);
+	}
 
 }

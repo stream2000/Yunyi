@@ -56,6 +56,12 @@ public class Article implements Serializable {
 	private String genre;
 
 	/**
+	 * 类别
+	 */
+	private Boolean hasTrans;
+
+
+	/**
 	 * 创建时间
 	 */
 	@TableField(value = "create_time", fill = FieldFill.INSERT) //新增有效

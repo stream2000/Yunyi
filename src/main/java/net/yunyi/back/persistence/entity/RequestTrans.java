@@ -17,13 +17,13 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class RequestTrans implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private Integer userId;
+	private Integer userId;
 
-    private Integer articleId;
+	private Integer articleId;
 
-    private Boolean solved;
+	private Boolean solved;
 
 
 }

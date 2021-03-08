@@ -9,17 +9,21 @@ import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.Article;
 import net.yunyi.back.persistence.entity.ArticleLike;
 import net.yunyi.back.persistence.entity.ArticleStats;
+import net.yunyi.back.persistence.entity.ArticleTextSeg;
 import net.yunyi.back.persistence.entity.RequestTrans;
 import net.yunyi.back.persistence.mapper.ArticleMapper;
 import net.yunyi.back.persistence.service.article.IArticleLikeService;
 import net.yunyi.back.persistence.service.article.IArticleService;
 import net.yunyi.back.persistence.service.article.IArticleStatsService;
 import net.yunyi.back.persistence.service.article.IRequestTransService;
+import net.yunyi.back.persistence.service.trans.IArticleTextSegService;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * <p>
@@ -41,6 +45,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	@Autowired
 	IRequestTransService requestTransService;
 
+	@Autowired
+	IArticleTextSegService articleTextSegService;
+
 	private static QueryWrapper<ArticleLike> queryLikeTableById(int articleId, int userId) {
 		return new QueryWrapper<ArticleLike>().eq("article_id", articleId).eq("user_id", userId);
 	}
@@ -48,13 +55,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	// TODO: store texts after splitting the article
 	@Override
 	@Transactional
-	public Article addArticle(final int uploaderId, final String title, final String originalText, final String genre) {
+	public Article addArticle(final int uploaderId, final String title, final String originalText, final String genre, final List<String> segments) {
 		Article article = new Article();
 		article.setGenre(genre);
 		article.setUploaderId(uploaderId);
 		article.setTitle(title);
 		article.setOriginalText(originalText);
 		save(article);
+
 		ArticleStats stats = new ArticleStats();
 		stats.setArticleId(article.getId());
 		stats.setLikeNum(0);
@@ -62,11 +70,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 		stats.setCommentNum(0);
 		stats.setViewNum(0);
 		articleStatsService.save(stats);
+
+		saveSegments(article.getId(), segments);
 		return article;
 	}
 
 	@Override
-	public Article modifyArticle(final int articleId, final String title, final String transTitle, final String originalText, final String genre) {
+	@Transactional
+	public Article modifyArticle(final int articleId, final String title, final String transTitle, final String originalText, final String genre, final List<String> segments) {
 		Article article = getById(articleId);
 		if (article == null) {
 			return null;
@@ -84,6 +95,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 			article.setOriginalText(originalText);
 		}
 		updateById(article);
+		articleTextSegService.remove(new QueryWrapper<ArticleTextSeg>().eq("article_id", articleId));
+		saveSegments(articleId, segments);
 		return article;
 	}
 
@@ -169,5 +182,21 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 		stats.setLikeNum(currentLikeNum - 1);
 		articleStatsService.updateById(stats);
 		return true;
+	}
+
+	private void saveSegments(int articleId, List<String> segments) {
+
+		for (int i = 0; i < segments.size(); i++) {
+			String seg = segments.get(i);
+			if (StringUtils.isBlank(seg)) {
+				throw new BizException(YunyiCommonEnum.ARTICLE_SEG_EMPTY);
+			}
+			ArticleTextSeg articleTextSeg = new ArticleTextSeg();
+			articleTextSeg.setArticleId(articleId);
+			articleTextSeg.setContent(seg);
+			articleTextSeg.setSequenceNumber(i);
+			articleTextSegService.save(articleTextSeg);
+		}
+
 	}
 }

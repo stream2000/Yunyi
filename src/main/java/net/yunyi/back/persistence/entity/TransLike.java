@@ -7,19 +7,19 @@ import java.io.Serializable;
 
 /**
  * <p>
- *
+ * 翻译点赞表
  * </p>
  *
  * @author stream2000
- * @since 2021-03-01
+ * @since 2021-03-07
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ArticleLike implements Serializable {
+public class TransLike implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Integer articleId;
+	private Integer transId;
 
 	private Integer userId;
 

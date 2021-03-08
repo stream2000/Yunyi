@@ -22,48 +22,48 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 public class ArticleComment implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * 评论唯一自增id
-     */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+	/**
+	 * 评论唯一自增id
+	 */
+	@TableId(value = "id", type = IdType.AUTO)
+	private Long id;
 
-    /**
-     * 楼层数
-     */
-    private Integer floor;
+	/**
+	 * 楼层数
+	 */
+	private Integer floor;
 
-    /**
-     * 发送者id
-     */
-    private Integer senderId;
+	/**
+	 * 发送者id
+	 */
+	private Integer senderId;
 
-    /**
-     * 评论文章id
-     */
-    private Integer articleId;
+	/**
+	 * 评论文章id
+	 */
+	private Integer articleId;
 
-    /**
-     * 是否引用评论
-     */
-    private Boolean hasRefComment;
+	/**
+	 * 是否引用评论
+	 */
+	private Boolean hasRefComment;
 
-    /**
-     * 评论引用的评论id
-     */
-    private Integer refCommentId;
+	/**
+	 * 评论引用的评论id
+	 */
+	private Integer refCommentId;
 
-    /**
-     * 评论内容
-     */
-    private String content;
+	/**
+	 * 评论内容
+	 */
+	private String content;
 
-    /**
-     * 发送时间
-     */
-    @TableField(value = "create_time", fill = FieldFill.INSERT) //新增有效
-    private Date createTime;
+	/**
+	 * 发送时间
+	 */
+	@TableField(value = "create_time", fill = FieldFill.INSERT) //新增有效
+	private Date createTime;
 
 }

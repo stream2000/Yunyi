@@ -2,6 +2,7 @@ package net.yunyi.back.persistence.service.trans;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import net.yunyi.back.persistence.entity.ArticleTrans;
+import net.yunyi.back.persistence.param.UploadTransParam;
 
 /**
  * <p>
@@ -12,5 +13,5 @@ import net.yunyi.back.persistence.entity.ArticleTrans;
  * @since 2021-03-07
  */
 public interface IArticleTransService extends IService<ArticleTrans> {
-
+	int uploadTranslation(int userId, UploadTransParam param);
 }

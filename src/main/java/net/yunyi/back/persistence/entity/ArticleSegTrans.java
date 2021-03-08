@@ -9,28 +9,38 @@ import java.io.Serializable;
 
 /**
  * <p>
- *
+ * 原文切分的翻译表
  * </p>
  *
  * @author stream2000
- * @since 2021-03-01
+ * @since 2021-03-08
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ArticleStats implements Serializable {
+public class ArticleSegTrans implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@TableId(value = "article_id", type = IdType.INPUT)
-	private Integer articleId;
+	/**
+	 * 唯一id
+	 */
+	@TableId(value = "id", type = IdType.AUTO)
+	private Long id;
 
-	private Integer viewNum;
+	/**
+	 * 对应原文切分的id
+	 */
+	private Integer transId;
 
-	private Integer likeNum;
+	/**
+	 * 翻译序号
+	 */
+	private Integer transSeq;
 
-	private Integer commentNum;
-
-	private Integer transRequestNum;
+	/**
+	 * 翻译内容
+	 */
+	private String content;
 
 
 }

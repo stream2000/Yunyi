@@ -6,10 +6,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
- * 原文切分表
+ * 翻译评论表
  * </p>
  *
  * @author stream2000
@@ -17,30 +18,50 @@ import java.io.Serializable;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ArticleTextSeg implements Serializable {
+public class TransComment implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 唯一id
+	 * 评论唯一自增id
 	 */
 	@TableId(value = "id", type = IdType.AUTO)
 	private Long id;
 
 	/**
-	 * 原文id
+	 * 楼层数
 	 */
-	private Integer articleId;
+	private Integer floor;
 
 	/**
-	 * 切分序号
+	 * 发送者id
 	 */
-	private Integer sequenceNumber;
+	private Integer senderId;
 
 	/**
-	 * 切分内容
+	 * 评论文章id
+	 */
+	private Integer transId;
+
+	/**
+	 * 是否引用评论
+	 */
+	private Boolean hasRefComment;
+
+	/**
+	 * 评论引用的评论id
+	 */
+	private Integer refCommentId;
+
+	/**
+	 * 评论内容
 	 */
 	private String content;
+
+	/**
+	 * 发送时间
+	 */
+	private LocalDateTime createTime;
 
 
 }

@@ -46,8 +46,9 @@ public class GlobalExceptionHandler {
 			errorCode = YunyiCommonEnum.INVALID_REQUEST.getResultCode();
 			errorMsg = "invalid input param: " + e.getMessage();
 		} else {
+			e.printStackTrace();
 			errorCode = YunyiCommonEnum.INTERNAL_SERVER_ERROR.getResultCode();
-			errorMsg = "internal server error : " + e.getMessage();
+			errorMsg = "internal server error : " + e.toString();
 		}
 		return ApiResult.error(errorCode, errorMsg);
 	}

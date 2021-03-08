@@ -82,9 +82,61 @@ create table article_text_seg
 drop table if exists article_trans;
 create table article_trans
 (
-    id             bigint auto_increment COMMENT '唯一id',
-    article_seg_id int COMMENT '对应原文切分的id',
-    trans_seq      int COMMENT '翻译序号',
-    content        text COMMENT '翻译内容',
+    id          bigint auto_increment COMMENT '唯一id',
+    article_id  int COMMENT '翻译对应原文id',
+    uploader_id int COMMENT '上传者id',
     primary key (id)
 ) COMMENT '原文切分的翻译表';
+
+drop table if exists article_seg_trans;
+create table article_seg_trans
+(
+    id        bigint auto_increment COMMENT '唯一id',
+    trans_id  int COMMENT '对应原文切分的id',
+    trans_seq int COMMENT '翻译序号',
+    content   text COMMENT '翻译内容',
+    primary key (id)
+) COMMENT '原文切分的翻译表';
+
+drop table if exists trans_comment;
+create table trans_comment
+(
+    id              bigint auto_increment COMMENT '评论唯一自增id',
+    floor           int COMMENT '楼层数',
+    sender_id       int not null COMMENT '发送者id',
+    trans_id        int not null COMMENT '评论文章id',
+    has_ref_comment bool COMMENT '是否引用评论',
+    ref_comment_id  int COMMENT '评论引用的评论id',
+    content         text COMMENT '评论内容',
+    create_time     datetime COMMENT '发送时间',
+    primary key (id)
+) COMMENT '翻译评论表';
+
+drop table if exists trans_item_comment;
+create table trans_item_comment
+(
+    id           bigint auto_increment COMMENT '翻译评论唯一自增id',
+    floor        int COMMENT '楼层数',
+    sender_id    int not null COMMENT '发送者id',
+    trans_seg_id int not null COMMENT '评论文章id',
+    content      text COMMENT '评论内容',
+    create_time  datetime COMMENT '发送时间',
+    primary key (id)
+) COMMENT '单句评论表';
+
+drop table if exists trans_stats;
+create table trans_stats
+(
+    trans_id    int,
+    like_num    int,
+    comment_num int,
+    primary key (trans_id)
+) COMMENT '翻译统计表';
+
+drop table if exists trans_like;
+create table trans_like
+(
+    trans_id int,
+    user_id  int,
+    primary key (trans_id, user_id)
+) COMMENT '翻译点赞表';

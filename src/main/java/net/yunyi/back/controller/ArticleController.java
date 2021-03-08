@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiOperation;
+import net.yunyi.back.common.BizException;
 import net.yunyi.back.common.LoginRequired;
 import net.yunyi.back.common.response.ApiResult;
 import net.yunyi.back.common.response.YunyiCommonEnum;
@@ -102,7 +103,10 @@ public class ArticleController {
 	@ResponseBody
 	@LoginRequired
 	public ApiResult<Article> uploadArticle(@RequestBody UploadArticleParam param, @RequestAttribute("user") User user) {
-		Article article = articleService.addArticle(user.getId().intValue(), param.getTitle(), param.getOriginalText(), param.getGenre());
+		if (param.getSegments() == null || param.getSegments().isEmpty()) {
+			throw new BizException(YunyiCommonEnum.ARTICLE_SEG_EMPTY);
+		}
+		Article article = articleService.addArticle(user.getId().intValue(), param.getTitle(), param.getOriginalText(), param.getGenre(), param.getSegments());
 		return ApiResult.ok(article);
 	}
 
@@ -111,7 +115,10 @@ public class ArticleController {
 	@LoginRequired
 	public ApiResult<Article> modifyArticle(@RequestBody UploadArticleParam param, @RequestAttribute("user") User user) {
 		// TODO: add more validation here. For example, only member can modify the article
-		Article article = articleService.modifyArticle(param.getArticleId(), param.getTitle(), param.getTransTitle(), param.getOriginalText(), param.getGenre());
+		if (param.getSegments() == null || param.getSegments().isEmpty()) {
+			throw new BizException(YunyiCommonEnum.ARTICLE_SEG_EMPTY);
+		}
+		Article article = articleService.modifyArticle(param.getArticleId(), param.getTitle(), param.getTransTitle(), param.getOriginalText(), param.getGenre(), param.getSegments());
 		if (article == null) {
 			return ApiResult.error(YunyiCommonEnum.ARTICLE_NOT_FOUND);
 		}
