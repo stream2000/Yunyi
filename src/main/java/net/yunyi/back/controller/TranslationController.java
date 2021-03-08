@@ -50,4 +50,11 @@ public class TranslationController {
 		return ApiResult.ok(articleTransService.deleteTranslation(user.getId().intValue(), id));
 	}
 
+	@PostMapping("/{id}/modify")
+	@ResponseBody
+	@LoginRequired
+	@ApiOperation(value = "删除翻译")
+	public ApiResult<Integer> modifyTranslation(@RequestAttribute("user") User user, @PathVariable int id, @RequestBody UploadTransParam param) {
+		return ApiResult.ok(articleTransService.modifyTranslation(user.getId().intValue(), param));
+	}
 }

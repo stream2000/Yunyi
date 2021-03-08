@@ -49,17 +49,9 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		articleTrans.setUploaderId(userId);
 		save(articleTrans);
 
-		for (int i = 0; i < param.getSegmentList().size(); i++) {
-			UploadTransParam.TransSegment transSegment = param.getSegmentList().get(i);
-			ArticleSegTrans segTrans = new ArticleSegTrans();
-			segTrans.setTransSeq(i);
-			segTrans.setTransId(articleTrans.getId().intValue());
-			segTrans.setContent(transSegment.getTranslationContent());
-			articleSegTransService.save(segTrans);
-		}
+		saveTranslation(articleTrans.getId().intValue(), param);
 
 		Article article = articleService.getById(param.getArticleId());
-
 		if (article == null) {
 			throw new BizException(YunyiCommonEnum.TRANS_ARTICLE_NOT_EXISTS);
 		}
@@ -75,6 +67,18 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		transStats.setLikeNum(0);
 		transStatsService.save(transStats);
 
+		return articleTrans.getId().intValue();
+	}
+
+	@Override
+	public int modifyTranslation(final int transId, final UploadTransParam param) {
+		ArticleTrans articleTrans = getById(transId);
+		if (articleTrans == null) {
+			throw new BizException(YunyiCommonEnum.TRANS_NOT_EXIST);
+		}
+
+		articleSegTransService.remove(new QueryWrapper<ArticleSegTrans>().eq("trans_id", transId));
+		saveTranslation(transId, param);
 
 		return articleTrans.getId().intValue();
 	}
@@ -107,8 +111,18 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		articleSegTransService.remove(new QueryWrapper<ArticleSegTrans>().eq("trans_id", transId));
 
 		// TODO delete comment and like
-
 		return true;
+	}
+
+	private void saveTranslation(int transId, UploadTransParam param) {
+		for (int i = 0; i < param.getSegmentList().size(); i++) {
+			UploadTransParam.TransSegment transSegment = param.getSegmentList().get(i);
+			ArticleSegTrans segTrans = new ArticleSegTrans();
+			segTrans.setTransSeq(i);
+			segTrans.setTransId(transId);
+			segTrans.setContent(transSegment.getTranslationContent());
+			articleSegTransService.save(segTrans);
+		}
 	}
 
 }

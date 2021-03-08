@@ -15,5 +15,7 @@ import net.yunyi.back.persistence.param.UploadTransParam;
 public interface IArticleTransService extends IService<ArticleTrans> {
 	int uploadTranslation(int userId, UploadTransParam param);
 
+	int modifyTranslation(int transId, UploadTransParam param);
+
 	boolean deleteTranslation(int userId, int transId);
 }

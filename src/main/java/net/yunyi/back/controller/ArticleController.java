@@ -57,7 +57,7 @@ public class ArticleController {
 
 	@GetMapping("/{id}")
 	@ResponseBody
-	@ApiOperation(value = "获取首页文章接口, 带分页")
+	@ApiOperation(value = "获取单个文章的具体内容")
 	public ApiResult<ArticleListItemVo> getArticleById(@PathVariable int id) {
 		ArticleListItemVo article = articleService.getArticleByQuery(new QueryWrapper<ArticleListItemVo>().eq("a.id", id));
 		return ApiResult.ok(article);
