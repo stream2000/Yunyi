@@ -46,7 +46,7 @@ public class CodeGenerator {
 		// 全局配置
 		GlobalConfig gc = new GlobalConfig();
 		String projectPath = System.getProperty("user.dir");
-		gc.setOutputDir(projectPath + "/tmp/");
+		gc.setOutputDir(projectPath + "/src/main/java/");
 		gc.setAuthor("stream2000");
 		gc.setOpen(false);
 		//        gc.setSwagger2(true); //实体属性 Swagger2 注解
