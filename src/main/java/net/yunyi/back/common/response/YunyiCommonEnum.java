@@ -18,6 +18,12 @@ public enum YunyiCommonEnum implements BaseErrorInfoInterface {
 	TRANS_PARAM_ERROR(20000, "translation param error"),
 
 	TRANS_ARTICLE_NOT_EXISTS(20001, "article to translate not exist"),
+
+	TRANS_NOT_EXIST(20002, "trans not exits"),
+
+	NO_PERMISSION_TO_DELETE(20003, "no permission to can delete")
+
+	// END
 	;
 
 	/**

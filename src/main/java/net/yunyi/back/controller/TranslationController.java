@@ -7,7 +7,10 @@ import net.yunyi.back.common.response.ApiResult;
 import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.User;
 import net.yunyi.back.persistence.param.UploadTransParam;
+import net.yunyi.back.persistence.service.trans.IArticleTransService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +24,10 @@ import java.util.Collections;
 @Validated
 @RequestMapping("/trans")
 public class TranslationController {
+
+	@Autowired
+	IArticleTransService articleTransService;
+
 	@PostMapping("/upload")
 	@ResponseBody
 	@LoginRequired
@@ -32,6 +39,15 @@ public class TranslationController {
 			}
 			Collections.sort(segment.getRefSegIds());
 		}
-		return ApiResult.ok();
+		return ApiResult.ok(articleTransService.uploadTranslation(user.getId().intValue(), param));
 	}
+
+	@PostMapping("/{id}/delete")
+	@ResponseBody
+	@LoginRequired
+	@ApiOperation(value = "删除翻译")
+	public ApiResult<Boolean> deleteTranslation(@RequestAttribute("user") User user, @PathVariable int id) {
+		return ApiResult.ok(articleTransService.deleteTranslation(user.getId().intValue(), id));
+	}
+
 }

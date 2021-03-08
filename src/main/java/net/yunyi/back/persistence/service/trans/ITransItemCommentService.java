@@ -1,4 +1,4 @@
-package net.yunyi.back.persistence.service;
+package net.yunyi.back.persistence.service.trans;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import net.yunyi.back.persistence.entity.TransItemComment;

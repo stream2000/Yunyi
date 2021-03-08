@@ -1,9 +1,9 @@
-package net.yunyi.back.persistence.service.impl;
+package net.yunyi.back.persistence.service.trans.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import net.yunyi.back.persistence.entity.TransStats;
 import net.yunyi.back.persistence.mapper.TransStatsMapper;
-import net.yunyi.back.persistence.service.ITransStatsService;
+import net.yunyi.back.persistence.service.trans.ITransStatsService;
 import org.springframework.stereotype.Service;
 
 /**
