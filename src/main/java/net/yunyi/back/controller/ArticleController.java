@@ -66,7 +66,7 @@ public class ArticleController {
 	@GetMapping("/all")
 	@ResponseBody
 	@ApiOperation(value = "获取首页文章接口, 带分页")
-	public ApiResult<NewsPageVo> getArticles(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @Nullable @RequestParam final String genre) {
+	public ApiResult<NewsPageVo> getArticles(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @Nullable @RequestParam final String genre, @RequestParam @Nullable String sortMethod) {
 		IPage<ArticleListItemVo> articles;
 		int articleCount;
 		if (StringUtils.isBlank(genre) || genre.equalsIgnoreCase("all")) {
@@ -102,6 +102,7 @@ public class ArticleController {
 	@PostMapping("/upload")
 	@ResponseBody
 	@LoginRequired
+	@ApiOperation(value = "上传文章")
 	public ApiResult<Article> uploadArticle(@RequestBody UploadArticleParam param, @RequestAttribute("user") User user) {
 		if (param.getSegments() == null || param.getSegments().isEmpty()) {
 			throw new BizException(YunyiCommonEnum.ARTICLE_SEG_EMPTY);
@@ -112,6 +113,7 @@ public class ArticleController {
 
 	@PostMapping("/modify")
 	@ResponseBody
+	@ApiOperation(value = "修改文章")
 	@LoginRequired
 	public ApiResult<Article> modifyArticle(@RequestBody UploadArticleParam param, @RequestAttribute("user") User user) {
 		// TODO: add more validation here. For example, only member can modify the article
@@ -128,6 +130,7 @@ public class ArticleController {
 	@PostMapping("/{id}/delete")
 	@ResponseBody
 	@LoginRequired
+	@ApiOperation(value = "删除文章")
 	public ApiResult<Boolean> removeArticle(@PathVariable int id, @RequestAttribute("user") User user) {
 		// TODO: add more validation here. For example, only member can delete the article
 		return ApiResult.ok(articleService.deleteArticle(id));
@@ -135,6 +138,7 @@ public class ArticleController {
 
 	@PostMapping("/{articleId}/request_trans")
 	@ResponseBody
+	@ApiOperation(value = "请求翻译")
 	@LoginRequired
 	public ApiResult<Boolean> requestTrans(@PathVariable int articleId, @RequestAttribute("user") User user) {
 		return ApiResult.ok(articleService.requestTrans(articleId, user.getId().intValue()));
@@ -152,7 +156,7 @@ public class ArticleController {
 	@PostMapping("/comment/{id}/delete")
 	@ResponseBody
 	@LoginRequired
-	@ApiOperation(value = "添加原文页面评论")
+	@ApiOperation(value = "删除对原文的评论")
 	public ApiResult<Boolean> deleteArticleComment(@PathVariable int id) {
 		return ApiResult.ok(articleCommentService.deleteArticleComment(id));
 	}
