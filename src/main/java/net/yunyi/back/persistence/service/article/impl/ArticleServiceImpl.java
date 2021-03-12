@@ -55,12 +55,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	// TODO: store texts after splitting the article
 	@Override
 	@Transactional
-	public Article addArticle(final int uploaderId, final String title, final String originalText, final String genre, final List<String> segments) {
+	public Article addArticle(final int uploaderId, final String title, final String genre, final List<String> segments) {
 		Article article = new Article();
 		article.setGenre(genre);
 		article.setUploaderId(uploaderId);
 		article.setTitle(title);
-		article.setOriginalText(originalText);
+		String text = String.join("", segments);
+		article.setOriginalText(text);
 		save(article);
 
 		ArticleStats stats = new ArticleStats();
@@ -77,7 +78,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
 	@Override
 	@Transactional
-	public Article modifyArticle(final int articleId, final String title, final String transTitle, final String originalText, final String genre, final List<String> segments) {
+	public Article modifyArticle(final int articleId, final String title, final String transTitle, final String genre, final List<String> segments) {
 		Article article = getById(articleId);
 		if (article == null) {
 			return null;
@@ -91,12 +92,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 		if (StringUtils.isNotBlank(transTitle)) {
 			article.setTransTitle(transTitle);
 		}
-		if (StringUtils.isNotEmpty(originalText)) {
-			article.setOriginalText(originalText);
+		if (segments != null && !segments.isEmpty()) {
+			article.setOriginalText(String.join("", segments));
+			articleTextSegService.remove(new QueryWrapper<ArticleTextSeg>().eq("article_id", articleId));
+			saveSegments(articleId, segments);
 		}
 		updateById(article);
-		articleTextSegService.remove(new QueryWrapper<ArticleTextSeg>().eq("article_id", articleId));
-		saveSegments(articleId, segments);
 		return article;
 	}
 
@@ -141,8 +142,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	}
 
 	@Override
-	public IPage<ArticleListItemVo> getArticlesByGenre(final Page<ArticleListItemVo> page, final String genre) {
-		return baseMapper.getAllArticles(page, new QueryWrapper<ArticleListItemVo>().eq("a.genre", genre));
+	public IPage<ArticleListItemVo> getArticlesByQuery(final Page<ArticleListItemVo> page, final QueryWrapper<ArticleListItemVo> query) {
+		return baseMapper.getAllArticles(page, query);
 	}
 
 	@Override
@@ -185,7 +186,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	}
 
 	private void saveSegments(int articleId, List<String> segments) {
-
 		for (int i = 0; i < segments.size(); i++) {
 			String seg = segments.get(i);
 			if (StringUtils.isBlank(seg)) {
@@ -197,6 +197,5 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 			articleTextSeg.setSequenceNumber(i);
 			articleTextSegService.save(articleTextSeg);
 		}
-
 	}
 }

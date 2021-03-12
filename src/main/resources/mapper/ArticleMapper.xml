@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.yunyi.back.persistence.mapper.ArticleMapper">
     <select id="getAllArticles" resultType="net.yunyi.back.persistence.vo.ArticleListItemVo">
-        select a.id as id,
+        select a.id                          as id,
                u.name,
                a.uploader_id,
                a.title,
@@ -11,9 +11,12 @@
                a.original_text,
                a.genre,
                a.has_trans,
+               UNIX_TIMESTAMP(a.create_time) as create_time,
+               UNIX_TIMESTAMP(a.update_time) as update_time,
                stats.like_num,
                stats.view_num,
-               stats.comment_num
+               stats.comment_num,
+               stats.trans_request_num
         from user u
                  join article a
                       on u.id = a.uploader_id
@@ -23,7 +26,7 @@
     </select>
 
     <select id="getArticleByQuery" resultType="net.yunyi.back.persistence.vo.ArticleListItemVo">
-        select a.id as id,
+        select a.id                          as id,
                u.name,
                a.uploader_id,
                a.title,
@@ -31,9 +34,12 @@
                a.original_text,
                a.genre,
                a.has_trans,
+               UNIX_TIMESTAMP(a.create_time) as create_time,
+               UNIX_TIMESTAMP(a.update_time) as update_time,
                stats.like_num,
                stats.view_num,
-               stats.comment_num
+               stats.comment_num,
+               stats.trans_request_num
         from user u
                  join article a
                       on u.id = a.uploader_id

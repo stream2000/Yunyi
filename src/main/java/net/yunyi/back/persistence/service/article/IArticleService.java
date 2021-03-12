@@ -19,9 +19,9 @@ import java.util.List;
  */
 public interface IArticleService extends IService<Article> {
 
-	Article addArticle(int uploaderId, String title, String originalText, String genre, final List<String> segments);
+	Article addArticle(int uploaderId, String title, String genre, final List<String> segments);
 
-	Article modifyArticle(int articleId, String title, String transTitle, String originalText, String genre, final List<String> segments);
+	Article modifyArticle(int articleId, String title, String transTitle, String genre, final List<String> segments);
 
 	boolean deleteArticle(int articleId);
 
@@ -29,7 +29,7 @@ public interface IArticleService extends IService<Article> {
 
 	IPage<ArticleListItemVo> getArticles(Page<ArticleListItemVo> page);
 
-	IPage<ArticleListItemVo> getArticlesByGenre(Page<ArticleListItemVo> page, String genre);
+	IPage<ArticleListItemVo> getArticlesByQuery(Page<ArticleListItemVo> page, QueryWrapper<ArticleListItemVo> query);
 
 	ArticleListItemVo getArticleByQuery(QueryWrapper<ArticleListItemVo> queryWrapper);
 

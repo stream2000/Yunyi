@@ -17,8 +17,11 @@ public class ArticleListItemVo {
 	private String originalText;
 	private String genre;
 	private boolean hasTrans;
+	private int createTime;
+	private int updateTime;
 	private int likeNum;
 	private int viewNum;
 	private int commentNum;
+	private int transRequestNum;
 
 }

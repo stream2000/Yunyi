@@ -57,7 +57,7 @@ public class ArticleController {
 
 	@GetMapping("/{id}")
 	@ResponseBody
-	@ApiOperation(value = "获取单个文章的具体内容")
+	@ApiOperation(value = "获取单个文章的具体内容, 在文章界面使用")
 	public ApiResult<ArticleListItemVo> getArticleById(@PathVariable int id) {
 		ArticleListItemVo article = articleService.getArticleByQuery(new QueryWrapper<ArticleListItemVo>().eq("a.id", id));
 		return ApiResult.ok(article);
@@ -65,21 +65,40 @@ public class ArticleController {
 
 	@GetMapping("/all")
 	@ResponseBody
-	@ApiOperation(value = "获取首页文章接口, 带分页")
+	@ApiOperation(value = "获取首页文章数据, 支持按热度排序（sortMethod=hot) ，按类别分类，带分页")
 	public ApiResult<NewsPageVo> getArticles(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @Nullable @RequestParam final String genre, @RequestParam @Nullable String sortMethod) {
 		IPage<ArticleListItemVo> articles;
 		int articleCount;
+		// construct the query
+		QueryWrapper<ArticleListItemVo> query = new QueryWrapper<>();
+		QueryWrapper<Article> countQuery = new QueryWrapper<>();
+
+		// filter by genre
 		if (StringUtils.isBlank(genre) || genre.equalsIgnoreCase("all")) {
-			articles = articleService.getArticles(new Page<>(pageId, pageSize));
 			articleCount = articleService.count();
 		} else {
-			articles = articleService.getArticlesByGenre(new Page<>(pageId, pageSize), genre);
-			articleCount = articleService.count(new QueryWrapper<Article>().eq("genre", genre));
+			query.eq("a.genre", query);
+			countQuery.eq("genre", genre);
 		}
+
+		// sort by certain method
+		// TODO: more sort method
+		if (StringUtils.isNotBlank(sortMethod) && sortMethod.equalsIgnoreCase("hot")) {
+			query.orderByDesc("stats.trans_request_num * 2 + stats.view_num + stats.comment_num * 3 + stats.like_num * 2");
+		} else {
+			query.orderByAsc("UNIX_TIMESTAMP(a.create_time)");
+		}
+
+		// do the query
+		articles = articleService.getArticlesByQuery(new Page<>(pageId, pageSize), query);
+		articleCount = articleService.count(countQuery);
+
+		// compute the page count
 		int pageCount = articleCount / pageSize;
 		if (pageCount == 0) {
 			pageCount = 1;
 		}
+
 		return ApiResult.ok(new NewsPageVo(pageCount, articles.getRecords()));
 	}
 
@@ -107,7 +126,7 @@ public class ArticleController {
 		if (param.getSegments() == null || param.getSegments().isEmpty()) {
 			throw new BizException(YunyiCommonEnum.ARTICLE_SEG_EMPTY);
 		}
-		Article article = articleService.addArticle(user.getId().intValue(), param.getTitle(), param.getOriginalText(), param.getGenre(), param.getSegments());
+		Article article = articleService.addArticle(user.getId().intValue(), param.getTitle(), param.getGenre(), param.getSegments());
 		return ApiResult.ok(article);
 	}
 
@@ -120,7 +139,7 @@ public class ArticleController {
 		if (param.getSegments() == null || param.getSegments().isEmpty()) {
 			throw new BizException(YunyiCommonEnum.ARTICLE_SEG_EMPTY);
 		}
-		Article article = articleService.modifyArticle(param.getArticleId(), param.getTitle(), param.getTransTitle(), param.getOriginalText(), param.getGenre(), param.getSegments());
+		Article article = articleService.modifyArticle(param.getArticleId(), param.getTitle(), param.getTransTitle(), param.getGenre(), param.getSegments());
 		if (article == null) {
 			return ApiResult.error(YunyiCommonEnum.ARTICLE_NOT_FOUND);
 		}
