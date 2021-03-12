@@ -8,7 +8,7 @@ import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.User;
 import net.yunyi.back.persistence.param.UploadTransParam;
 import net.yunyi.back.persistence.service.trans.IArticleTransService;
-import net.yunyi.back.persistence.vo.TranslationPageVo;
+import net.yunyi.back.persistence.vo.SimpleTranslationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,8 +63,8 @@ public class TranslationController {
 	@GetMapping("/{id}")
 	@ResponseBody
 	@ApiOperation("获取一个翻译的具体内容")
-	public ApiResult<TranslationPageVo> getTranslation(@PathVariable final int id) {
-		return ApiResult.ok();
+	public ApiResult<SimpleTranslationVo> getTranslation(@PathVariable final int id) {
+		return ApiResult.ok(articleTransService.getTranslation(id));
 	}
 
 	// TODO

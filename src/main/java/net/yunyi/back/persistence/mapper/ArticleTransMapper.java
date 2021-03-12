@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import net.yunyi.back.persistence.entity.ArticleTrans;
-import net.yunyi.back.persistence.vo.BestTranslationVo;
+import net.yunyi.back.persistence.vo.SimpleTranslationVo;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,5 +19,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface ArticleTransMapper extends BaseMapper<ArticleTrans> {
 
-	BestTranslationVo getBestTranslation(@Param(Constants.WRAPPER) Wrapper<ArticleTrans> ew);
+	SimpleTranslationVo getBestTranslation(@Param(Constants.WRAPPER) Wrapper<ArticleTrans> ew);
+
+	List<SimpleTranslationVo> getSimpleTranslations(@Param(Constants.WRAPPER) Wrapper<ArticleTrans> ew);
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BestTranslationVo {
+public class SimpleTranslationVo {
 	private String content;
 	private String uploaderName;
 	private String uploaderId;

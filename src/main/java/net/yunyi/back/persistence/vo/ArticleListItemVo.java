@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,5 +25,6 @@ public class ArticleListItemVo {
 	private int viewNum;
 	private int commentNum;
 	private int transRequestNum;
-	private BestTranslationVo bestTranslation;
+	private SimpleTranslationVo bestTranslation;
+	private List<SimpleTranslationVo> translations;
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import net.yunyi.back.persistence.entity.ArticleTrans;
 import net.yunyi.back.persistence.param.UploadTransParam;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
+import net.yunyi.back.persistence.vo.SimpleTranslationVo;
 
 /**
  * <p>
@@ -20,5 +21,9 @@ public interface IArticleTransService extends IService<ArticleTrans> {
 
 	boolean deleteTranslation(int userId, int transId);
 
+	SimpleTranslationVo getTranslation(int transId);
+
 	void fillBestTranslationForArticle(ArticleListItemVo vo);
+
+	void fillTranslations(ArticleListItemVo vo);
 }

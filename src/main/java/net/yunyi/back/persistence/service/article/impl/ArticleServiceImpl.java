@@ -160,7 +160,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	@Transactional
 	public ArticleListItemVo getArticleByQuery(final QueryWrapper<ArticleListItemVo> queryWrapper) {
 		ArticleListItemVo vo = baseMapper.getArticleByQuery(queryWrapper);
-		transService.fillBestTranslationForArticle(vo);
+		if (vo != null && vo.isHasTrans()) {
+			transService.fillBestTranslationForArticle(vo);
+			transService.fillTranslations(vo);
+		}
 		return vo;
 	}
 
