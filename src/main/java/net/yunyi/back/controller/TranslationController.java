@@ -55,7 +55,7 @@ public class TranslationController {
 	@PostMapping("/{id}/modify")
 	@ResponseBody
 	@LoginRequired
-	@ApiOperation(value = "删除翻译")
+	@ApiOperation(value = "修改翻译")
 	public ApiResult<Integer> modifyTranslation(@RequestAttribute("user") User user, @PathVariable int id, @RequestBody UploadTransParam param) {
 		return ApiResult.ok(articleTransService.modifyTranslation(user.getId().intValue(), param));
 	}

@@ -17,6 +17,7 @@ import net.yunyi.back.persistence.service.article.IArticleService;
 import net.yunyi.back.persistence.service.article.IArticleStatsService;
 import net.yunyi.back.persistence.service.article.IRequestTransService;
 import net.yunyi.back.persistence.service.trans.IArticleTextSegService;
+import net.yunyi.back.persistence.service.trans.IArticleTransService;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
 	@Autowired
 	IArticleTextSegService articleTextSegService;
+
+	@Autowired
+	IArticleTransService transService;
 
 	private static QueryWrapper<ArticleLike> queryLikeTableById(int articleId, int userId) {
 		return new QueryWrapper<ArticleLike>().eq("article_id", articleId).eq("user_id", userId);
@@ -137,18 +141,27 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	}
 
 	@Override
+	@Transactional
 	public IPage<ArticleListItemVo> getArticles(Page<ArticleListItemVo> page) {
-		return baseMapper.getAllArticles(page, new QueryWrapper<>());
+		IPage<ArticleListItemVo> result = baseMapper.getAllArticles(page, new QueryWrapper<>());
+		result.getRecords().forEach(r -> transService.fillBestTranslationForArticle(r));
+		return result;
 	}
 
 	@Override
+	@Transactional
 	public IPage<ArticleListItemVo> getArticlesByQuery(final Page<ArticleListItemVo> page, final QueryWrapper<ArticleListItemVo> query) {
-		return baseMapper.getAllArticles(page, query);
+		IPage<ArticleListItemVo> result = baseMapper.getAllArticles(page, query);
+		result.getRecords().forEach(r -> transService.fillBestTranslationForArticle(r));
+		return result;
 	}
 
 	@Override
+	@Transactional
 	public ArticleListItemVo getArticleByQuery(final QueryWrapper<ArticleListItemVo> queryWrapper) {
-		return baseMapper.getArticleByQuery(queryWrapper);
+		ArticleListItemVo vo = baseMapper.getArticleByQuery(queryWrapper);
+		transService.fillBestTranslationForArticle(vo);
+		return vo;
 	}
 
 	@Override

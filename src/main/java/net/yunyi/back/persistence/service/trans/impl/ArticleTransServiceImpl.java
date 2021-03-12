@@ -15,9 +15,14 @@ import net.yunyi.back.persistence.service.trans.IArticleSegTransService;
 import net.yunyi.back.persistence.service.trans.IArticleTransService;
 import net.yunyi.back.persistence.service.trans.ITransLikeService;
 import net.yunyi.back.persistence.service.trans.ITransStatsService;
+import net.yunyi.back.persistence.vo.ArticleListItemVo;
+import net.yunyi.back.persistence.vo.BestTranslationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -112,6 +117,31 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 
 		// TODO delete comment and like
 		return true;
+	}
+
+	@Override
+	@Transactional
+	public void fillBestTranslationForArticle(final ArticleListItemVo vo) {
+		if (vo == null || !vo.isHasTrans()) {
+			return;
+		}
+		QueryWrapper<ArticleTrans> bestTranslationQuery = new QueryWrapper<>();
+		bestTranslationQuery.eq("article_id", vo.getId());
+		bestTranslationQuery.orderByDesc("stats.like_num * 3 + stats.comment_num * 4");
+
+		BestTranslationVo bestTranslation = baseMapper.getBestTranslation(bestTranslationQuery);
+
+		if (bestTranslation == null) {
+			throw new BizException(YunyiCommonEnum.TRANS_NOT_EXIST);
+		}
+
+		List<ArticleSegTrans> trans = articleSegTransService.list(new QueryWrapper<ArticleSegTrans>().eq("trans_id", bestTranslation.getTransId()).orderByAsc("trans_seq"));
+
+		String content = trans.stream().map(ArticleSegTrans::getContent).collect(Collectors.joining(""));
+		int length = Math.min(content.length(), 300);
+		content = content.substring(0, length);
+		bestTranslation.setContent(content);
+		vo.setBestTranslation(bestTranslation);
 	}
 
 	private void saveTranslation(int transId, UploadTransParam param) {

@@ -23,5 +23,5 @@ public class ArticleListItemVo {
 	private int viewNum;
 	private int commentNum;
 	private int transRequestNum;
-
+	private BestTranslationVo bestTranslation;
 }

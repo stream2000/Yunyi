@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.yunyi.back.persistence.mapper.ArticleTransMapper">
-
+    <select id="getBestTranslation" resultType="net.yunyi.back.persistence.vo.BestTranslationVo">
+        select t.id as trans_id, u.id as uploader_id, u.name as uploader_name, stats.like_num
+        from article_trans t
+                 join trans_stats stats
+                      on t.id = stats.trans_id
+                 join user u
+                      on t.uploader_id = u.id
+            ${ew.customSqlSegment}
+        limit 1
+    </select>
 </mapper>

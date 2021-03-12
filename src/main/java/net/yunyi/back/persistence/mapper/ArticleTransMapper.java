@@ -1,7 +1,11 @@
 package net.yunyi.back.persistence.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import net.yunyi.back.persistence.entity.ArticleTrans;
+import net.yunyi.back.persistence.vo.BestTranslationVo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -13,4 +17,5 @@ import net.yunyi.back.persistence.entity.ArticleTrans;
  */
 public interface ArticleTransMapper extends BaseMapper<ArticleTrans> {
 
+	BestTranslationVo getBestTranslation(@Param(Constants.WRAPPER) Wrapper<ArticleTrans> ew);
 }
