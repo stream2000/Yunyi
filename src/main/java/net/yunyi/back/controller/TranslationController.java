@@ -7,11 +7,13 @@ import net.yunyi.back.common.response.ApiResult;
 import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.User;
 import net.yunyi.back.persistence.param.AddTranslationCommentParam;
+import net.yunyi.back.persistence.param.AddTranslationSegCommentParam;
 import net.yunyi.back.persistence.param.UploadTransParam;
 import net.yunyi.back.persistence.service.trans.IArticleTransService;
 import net.yunyi.back.persistence.vo.ArticleCommentVo;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -76,7 +78,7 @@ public class TranslationController {
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "添加对整个翻译的评论")
-	public ApiResult<Integer> addArticleComment(@RequestAttribute(value = "user") User user, @RequestBody AddTranslationCommentParam param) {
+	public ApiResult<Integer> addTranslationComment(@RequestAttribute(value = "user") User user, @RequestBody AddTranslationCommentParam param) {
 		return ApiResult.ok();
 	}
 
@@ -84,24 +86,70 @@ public class TranslationController {
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "删除对整个翻译的评论")
-	public ApiResult<Boolean> deleteArticleComment(@PathVariable int id) {
+	public ApiResult<Boolean> deleteTranslationComment(@PathVariable int id) {
 		return ApiResult.ok();
 	}
 
 	@GetMapping("/{id}/comments")
 	@ResponseBody
 	@ApiOperation(value = "获取翻译界面的评论")
-	public ApiResult<List<ArticleCommentVo>> getArticleComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id) {
+	public ApiResult<List<ArticleCommentVo>> getTranslationComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
 		return ApiResult.ok();
 	}
 
-	// TODO
-	// 1. 首页界面，翻译模式下的内容
-	// 2. 进入原文界面
-	// 	2.1 整体原文的评论，这个已经完成
-	//  2.2 翻译列表，翻译内容
-	// 3. 进入翻译界面
-	// 	3.1 对翻译的评论（下个功能点）
-	// 	3.2 对翻译条目的评论
-	// 4. 待解决问题：切分以后，应该返回什么内容？ 直接返回切分的结果，让前端处理？大不了那部分的代码也我来写吧。
+	@PostMapping("/{transId}/like")
+	@ResponseBody
+	@LoginRequired
+	@ApiOperation(value = "点赞文章")
+	public ApiResult<Boolean> likeTrans(@RequestAttribute User user, @PathVariable int transId) {
+		return ApiResult.ok();
+	}
+
+	@PostMapping("/{transId}/cancel_like")
+	@ResponseBody
+	@LoginRequired
+	@ApiOperation(value = "取消点赞文章")
+	public ApiResult<Boolean> cancelLikeTrans(@RequestAttribute User user, @PathVariable int transId) {
+		return ApiResult.ok();
+	}
+
+	@PostMapping("/detail/comment/add")
+	@ResponseBody
+	@LoginRequired
+	@ApiOperation(value = "添加对翻译片段的评论")
+	public ApiResult<Integer> addDetailTranslationComment(@RequestAttribute(value = "user") User user, @RequestBody AddTranslationSegCommentParam param) {
+		return ApiResult.ok();
+	}
+
+	@PostMapping("/detail/comment/{id}/delete")
+	@ResponseBody
+	@LoginRequired
+	@ApiOperation(value = "删除对翻译片段的评论")
+	public ApiResult<Boolean> deleteDetailTranslationComment(@PathVariable int id) {
+		return ApiResult.ok();
+	}
+
+	@PostMapping("/detail/{transSegId}/like")
+	@ResponseBody
+	@LoginRequired
+	@ApiOperation(value = "点赞文章")
+	public ApiResult<Boolean> likeTransSeg(@RequestAttribute User user, @PathVariable int transSegId) {
+		return ApiResult.ok();
+	}
+
+	@PostMapping("/detail/{transSegId}/cancel_like")
+	@ResponseBody
+	@LoginRequired
+	@ApiOperation(value = "取消点赞文章")
+	public ApiResult<Boolean> cancelLikeTransSeg(@RequestAttribute User user, @PathVariable int transSegId) {
+		return ApiResult.ok();
+	}
+
+	@GetMapping("/detail/{id}/comments")
+	@ResponseBody
+	@ApiOperation(value = "获取单句翻译的评论")
+	public ApiResult<List<ArticleCommentVo>> getDetailTranslationComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
+		return ApiResult.ok();
+	}
+
 }
