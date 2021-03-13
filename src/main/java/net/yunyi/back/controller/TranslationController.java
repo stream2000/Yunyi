@@ -6,8 +6,10 @@ import net.yunyi.back.common.LoginRequired;
 import net.yunyi.back.common.response.ApiResult;
 import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.User;
+import net.yunyi.back.persistence.param.AddTranslationCommentParam;
 import net.yunyi.back.persistence.param.UploadTransParam;
 import net.yunyi.back.persistence.service.trans.IArticleTransService;
+import net.yunyi.back.persistence.vo.ArticleCommentVo;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -17,10 +19,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.Min;
 import java.util.Collections;
+import java.util.List;
 
 @RestController
 @Validated
@@ -65,6 +70,29 @@ public class TranslationController {
 	@ApiOperation("获取一个翻译的具体内容")
 	public ApiResult<SimpleTranslationVo> getTranslation(@PathVariable final int id) {
 		return ApiResult.ok(articleTransService.getTranslation(id));
+	}
+
+	@PostMapping("/comment/add")
+	@ResponseBody
+	@LoginRequired
+	@ApiOperation(value = "添加对整个翻译的评论")
+	public ApiResult<Integer> addArticleComment(@RequestAttribute(value = "user") User user, @RequestBody AddTranslationCommentParam param) {
+		return ApiResult.ok();
+	}
+
+	@PostMapping("/comment/{id}/delete")
+	@ResponseBody
+	@LoginRequired
+	@ApiOperation(value = "删除对整个翻译的评论")
+	public ApiResult<Boolean> deleteArticleComment(@PathVariable int id) {
+		return ApiResult.ok();
+	}
+
+	@GetMapping("/{id}/comments")
+	@ResponseBody
+	@ApiOperation(value = "获取翻译界面的评论")
+	public ApiResult<List<ArticleCommentVo>> getArticleComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id) {
+		return ApiResult.ok();
 	}
 
 	// TODO

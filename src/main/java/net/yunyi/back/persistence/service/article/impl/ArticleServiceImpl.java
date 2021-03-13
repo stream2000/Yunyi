@@ -144,7 +144,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	@Transactional
 	public IPage<ArticleListItemVo> getArticles(Page<ArticleListItemVo> page) {
 		IPage<ArticleListItemVo> result = baseMapper.getAllArticles(page, new QueryWrapper<>());
-		result.getRecords().forEach(r -> transService.fillBestTranslationForArticle(r));
+		result.getRecords().forEach(r -> {
+			if (r != null && r.isHasTrans()) {
+				transService.fillBestTranslationForArticle(r);
+			}
+		});
 		return result;
 	}
 
@@ -152,7 +156,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	@Transactional
 	public IPage<ArticleListItemVo> getArticlesByQuery(final Page<ArticleListItemVo> page, final QueryWrapper<ArticleListItemVo> query) {
 		IPage<ArticleListItemVo> result = baseMapper.getAllArticles(page, query);
-		result.getRecords().forEach(r -> transService.fillBestTranslationForArticle(r));
+		result.getRecords().forEach(r -> {
+			if (r != null && r.isHasTrans()) {
+				transService.fillBestTranslationForArticle(r);
+			}
+		});
 		return result;
 	}
 

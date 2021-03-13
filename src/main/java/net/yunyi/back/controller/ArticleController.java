@@ -49,6 +49,10 @@ import java.util.stream.Collectors;
 @Validated
 public class ArticleController {
 
+	private static final String SORT_BY_HOT = "HOT";
+	private static final String SORT_BY_NEWEST = "NEWEST";
+	private static final String SORT_BY_DEFAULT = "DEFAULT";
+
 	@Autowired
 	IArticleService articleService;
 
@@ -65,8 +69,8 @@ public class ArticleController {
 
 	@GetMapping("/all")
 	@ResponseBody
-	@ApiOperation(value = "获取首页文章数据, 支持按热度排序（sortMethod=hot) ，按类别分类，带分页")
-	public ApiResult<NewsPageVo> getArticles(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @Nullable @RequestParam final String genre, @RequestParam @Nullable String sortMethod) {
+	@ApiOperation(value = "获取首页文章数据, 支持按热度排序（sort=hot)，按类别分类，带分页")
+	public ApiResult<NewsPageVo> getArticles(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @Nullable @RequestParam final String genre, @RequestParam @Nullable String sort) {
 		IPage<ArticleListItemVo> articles;
 		int articleCount;
 		// construct the query
@@ -81,12 +85,21 @@ public class ArticleController {
 			countQuery.eq("genre", genre);
 		}
 
+		if (StringUtils.isBlank(sort)) {
+			sort = "default";
+		}
+
 		// sort by certain method
 		// TODO: more sort method
-		if (StringUtils.isNotBlank(sortMethod) && sortMethod.equalsIgnoreCase("hot")) {
+		switch (sort.toUpperCase()) {
+		case SORT_BY_HOT:
 			query.orderByDesc("stats.trans_request_num * 2 + stats.view_num + stats.comment_num * 3 + stats.like_num * 2");
-		} else {
+			break;
+		case SORT_BY_NEWEST:
 			query.orderByAsc("UNIX_TIMESTAMP(a.create_time)");
+			break;
+		default:
+			query.orderByDesc("UNIX_TIMESTAMP(a.create_time)");
 		}
 
 		// do the query
@@ -182,11 +195,10 @@ public class ArticleController {
 
 	@GetMapping("/{id}/comments")
 	@ResponseBody
-	@ApiOperation(value = "添加原文页面评论")
-	public ApiResult<List<ArticleCommentVo>> getArticleComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id) {
+	@ApiOperation(value = "获取翻译界面的评论")
+	public ApiResult<List<ArticleCommentVo>> getArticleComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
 		return ApiResult.ok(articleCommentService.getArticleComment(new Page<>(pageId, pageSize), id).getRecords().stream().sorted().collect(Collectors.toList()));
 	}
-
 
 }
 

@@ -135,7 +135,7 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 
 		SimpleTranslationVo bestTranslation = baseMapper.getBestTranslation(bestTranslationQuery);
 		if (bestTranslation == null) {
-			throw new BizException(YunyiCommonEnum.TRANS_NOT_EXIST);
+			return;
 		}
 
 		bestTranslation.setContent(getSimpleTransContent(bestTranslation.getTransId()));
