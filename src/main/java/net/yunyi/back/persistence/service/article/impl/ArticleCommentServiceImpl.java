@@ -76,7 +76,7 @@ public class ArticleCommentServiceImpl extends ServiceImpl<ArticleCommentMapper,
 	}
 
 	@Override
-	public IPage<ArticleCommentVo> getArticleComment(final Page<ArticleCommentVo> page, final int articleId) {
+	public IPage<ArticleCommentVo> getArticleComments(final Page<ArticleCommentVo> page, final int articleId) {
 		IPage<ArticleCommentVo> result = baseMapper.getArticleComments(page, articleId);
 		for (ArticleCommentVo commentVo : result.getRecords()) {
 			if (commentVo.isHasRefComment()) {

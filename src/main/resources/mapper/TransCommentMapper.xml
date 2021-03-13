@@ -2,4 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.yunyi.back.persistence.mapper.TransCommentMapper">
 
+    <select id="getTransComments" resultType="net.yunyi.back.persistence.vo.TransCommentVo">
+        select c.id                          as id,
+               c.sender_id,
+               u.name                        as sender_name,
+               c.content,
+               UNIX_TIMESTAMP(c.create_time) as send_time,
+               c.floor,
+               c.has_ref_comment,
+               c.ref_comment_id
+        from trans_comment c
+                 join user u
+                      on u.id = c.sender_id
+            ${ew.customSqlSegment}
+    </select>
+    <select id="getTransComment" resultType="net.yunyi.back.persistence.vo.TransCommentVo">
+        select c.id                          as id,
+               c.sender_id,
+               u.name                        as sender_name,
+               c.content,
+               UNIX_TIMESTAMP(c.create_time) as send_time,
+               c.floor,
+               c.has_ref_comment,
+               c.ref_comment_id
+        from trans_comment c
+                 join user u
+                      on u.id = c.sender_id
+            ${ew.customSqlSegment}
+    </select>
 </mapper>

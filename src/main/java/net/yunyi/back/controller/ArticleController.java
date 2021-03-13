@@ -78,15 +78,13 @@ public class ArticleController {
 		QueryWrapper<Article> countQuery = new QueryWrapper<>();
 
 		// filter by genre
-		if (StringUtils.isBlank(genre) || genre.equalsIgnoreCase("all")) {
-			articleCount = articleService.count();
-		} else {
+		if (StringUtils.isNotBlank(genre)) {
 			query.eq("a.genre", query);
 			countQuery.eq("genre", genre);
 		}
 
 		if (StringUtils.isBlank(sort)) {
-			sort = "default";
+			sort = SORT_BY_DEFAULT;
 		}
 
 		// sort by certain method
@@ -96,10 +94,11 @@ public class ArticleController {
 			query.orderByDesc("stats.trans_request_num * 2 + stats.view_num + stats.comment_num * 3 + stats.like_num * 2");
 			break;
 		case SORT_BY_NEWEST:
-			query.orderByAsc("UNIX_TIMESTAMP(a.create_time)");
+			query.orderByDesc("UNIX_TIMESTAMP(a.create_time)");
 			break;
 		default:
-			query.orderByDesc("UNIX_TIMESTAMP(a.create_time)");
+			query.orderByAsc("UNIX_TIMESTAMP(a.create_time)");
+			break;
 		}
 
 		// do the query
@@ -197,7 +196,7 @@ public class ArticleController {
 	@ResponseBody
 	@ApiOperation(value = "获取翻译界面的评论")
 	public ApiResult<List<ArticleCommentVo>> getArticleComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
-		return ApiResult.ok(articleCommentService.getArticleComment(new Page<>(pageId, pageSize), id).getRecords().stream().sorted().collect(Collectors.toList()));
+		return ApiResult.ok(articleCommentService.getArticleComments(new Page<>(pageId, pageSize), id).getRecords().stream().sorted().collect(Collectors.toList()));
 	}
 
 }

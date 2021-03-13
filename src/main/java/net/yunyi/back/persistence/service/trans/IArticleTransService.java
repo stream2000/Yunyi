@@ -26,4 +26,9 @@ public interface IArticleTransService extends IService<ArticleTrans> {
 	void fillBestTranslationForArticle(ArticleListItemVo vo);
 
 	void fillTranslations(ArticleListItemVo vo);
+
+	boolean likeTrans(int transId, final int userId);
+
+	boolean cancelLikeTrans(int transId, final int userId);
+
 }

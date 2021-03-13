@@ -19,5 +19,5 @@ public interface IArticleCommentService extends IService<ArticleComment> {
 
 	boolean deleteArticleComment(final int commentId);
 
-	IPage<ArticleCommentVo> getArticleComment(Page<ArticleCommentVo> page, int articleId);
+	IPage<ArticleCommentVo> getArticleComments(Page<ArticleCommentVo> page, int articleId);
 }

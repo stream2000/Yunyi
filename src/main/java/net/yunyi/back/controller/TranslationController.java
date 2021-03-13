@@ -1,5 +1,8 @@
 package net.yunyi.back.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiOperation;
 import net.yunyi.back.common.BizException;
 import net.yunyi.back.common.LoginRequired;
@@ -10,8 +13,10 @@ import net.yunyi.back.persistence.param.AddTranslationCommentParam;
 import net.yunyi.back.persistence.param.AddTranslationSegCommentParam;
 import net.yunyi.back.persistence.param.UploadTransParam;
 import net.yunyi.back.persistence.service.trans.IArticleTransService;
+import net.yunyi.back.persistence.service.trans.ITransCommentService;
 import net.yunyi.back.persistence.vo.ArticleCommentVo;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
+import net.yunyi.back.persistence.vo.TransCommentVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +41,9 @@ public class TranslationController {
 
 	@Autowired
 	IArticleTransService articleTransService;
+
+	@Autowired
+	ITransCommentService transCommentService;
 
 	@PostMapping("/upload")
 	@ResponseBody
@@ -79,7 +87,7 @@ public class TranslationController {
 	@LoginRequired
 	@ApiOperation(value = "添加对整个翻译的评论")
 	public ApiResult<Integer> addTranslationComment(@RequestAttribute(value = "user") User user, @RequestBody AddTranslationCommentParam param) {
-		return ApiResult.ok();
+		return ApiResult.ok(transCommentService.addTransComment(user.getId().intValue(), param.getTransId(), param.getContent(), param.isHasRefComment(), param.getRefCommentId()));
 	}
 
 	@PostMapping("/comment/{id}/delete")
@@ -87,14 +95,17 @@ public class TranslationController {
 	@LoginRequired
 	@ApiOperation(value = "删除对整个翻译的评论")
 	public ApiResult<Boolean> deleteTranslationComment(@PathVariable int id) {
-		return ApiResult.ok();
+		return ApiResult.ok(transCommentService.deleteArticleComment(id));
 	}
 
 	@GetMapping("/{id}/comments")
 	@ResponseBody
 	@ApiOperation(value = "获取翻译界面的评论")
-	public ApiResult<List<ArticleCommentVo>> getTranslationComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
-		return ApiResult.ok();
+	public ApiResult<List<TransCommentVo>> getTranslationComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
+		QueryWrapper<TransCommentVo> query = new QueryWrapper<>();
+		query.eq("c.trans_id", id);
+		IPage<TransCommentVo> result = transCommentService.getTransComments(new Page<>(pageId, pageSize), query);
+		return ApiResult.ok(result.getRecords());
 	}
 
 	@PostMapping("/{transId}/like")
@@ -102,7 +113,7 @@ public class TranslationController {
 	@LoginRequired
 	@ApiOperation(value = "点赞文章")
 	public ApiResult<Boolean> likeTrans(@RequestAttribute User user, @PathVariable int transId) {
-		return ApiResult.ok();
+		return ApiResult.ok(articleTransService.likeTrans(transId, user.getId().intValue()));
 	}
 
 	@PostMapping("/{transId}/cancel_like")
@@ -110,7 +121,7 @@ public class TranslationController {
 	@LoginRequired
 	@ApiOperation(value = "取消点赞文章")
 	public ApiResult<Boolean> cancelLikeTrans(@RequestAttribute User user, @PathVariable int transId) {
-		return ApiResult.ok();
+		return ApiResult.ok(articleTransService.cancelLikeTrans(transId, user.getId().intValue()));
 	}
 
 	@PostMapping("/detail/comment/add")

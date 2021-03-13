@@ -7,6 +7,7 @@ import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.Article;
 import net.yunyi.back.persistence.entity.ArticleSegTrans;
 import net.yunyi.back.persistence.entity.ArticleTrans;
+import net.yunyi.back.persistence.entity.TransLike;
 import net.yunyi.back.persistence.entity.TransStats;
 import net.yunyi.back.persistence.mapper.ArticleTransMapper;
 import net.yunyi.back.persistence.param.UploadTransParam;
@@ -45,6 +46,10 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 
 	@Autowired
 	IArticleService articleService;
+
+	private static QueryWrapper<TransLike> queryLikeTableById(int transId, int userId) {
+		return new QueryWrapper<TransLike>().eq("trans_id", transId).eq("user_id", userId);
+	}
 
 	@Override
 	@Transactional
@@ -149,6 +154,39 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		query.orderByDesc("stats.like_num * 3 + stats.comment_num * 4");
 
 		vo.setTranslations(baseMapper.getSimpleTranslations(query));
+	}
+
+	@Override
+	@Transactional
+	public boolean likeTrans(final int transId, final int userId) {
+		QueryWrapper<TransLike> query = queryLikeTableById(transId, userId);
+		if (transLikeService.getOne(query) != null) {
+			return true;
+		}
+		TransLike like = new TransLike();
+		like.setTransId(transId);
+		like.setUserId(userId);
+		transLikeService.save(like);
+		TransStats stats = transStatsService.getById(transId);
+		int currentLikeNum = stats.getLikeNum() != null ? stats.getLikeNum() : 0;
+		stats.setLikeNum(currentLikeNum + 1);
+		transStatsService.updateById(stats);
+		return true;
+	}
+
+	@Override
+	@Transactional
+	public boolean cancelLikeTrans(final int transId, final int userId) {
+		QueryWrapper<TransLike> query = queryLikeTableById(transId, userId);
+		if (transLikeService.getOne(query) == null) {
+			return false;
+		}
+		transLikeService.remove(queryLikeTableById(transId, userId));
+		TransStats stats = transStatsService.getById(transId);
+		int currentLikeNum = stats.getLikeNum() != null ? stats.getLikeNum() : 1;
+		stats.setLikeNum(currentLikeNum - 1);
+		transStatsService.updateById(stats);
+		return true;
 	}
 
 	private String getSimpleTransContent(int transId) {
