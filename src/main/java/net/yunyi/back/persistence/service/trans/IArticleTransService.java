@@ -5,6 +5,7 @@ import net.yunyi.back.persistence.entity.ArticleTrans;
 import net.yunyi.back.persistence.param.UploadTransParam;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
+import net.yunyi.back.persistence.vo.TranslationDetailVo;
 
 /**
  * <p>
@@ -30,6 +31,8 @@ public interface IArticleTransService extends IService<ArticleTrans> {
 	boolean likeTrans(int transId, final int userId);
 
 	boolean cancelLikeTrans(int transId, final int userId);
+
+	TranslationDetailVo getTranslationDetail(int transId);
 
 	boolean likeTransSeg(int userId, int transSegId);
 

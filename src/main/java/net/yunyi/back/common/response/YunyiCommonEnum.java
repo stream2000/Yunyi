@@ -27,6 +27,12 @@ public enum YunyiCommonEnum implements BaseErrorInfoInterface {
 
 	TRANS_SEG_NOT_EXISTS(20005, "trans seg not exists"),
 
+	TRANS_USER_NOT_FOUND(20006, "trans uploader not found"),
+
+	TRANS_SEG_NUMBER_ERROR(20007, "trans segment number error"),
+
+	TRANS_TEXT_SEG_NOT_EXISTS(20008, "trans text seg not exists"),
+
 	// END
 	;
 

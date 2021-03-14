@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 public class SimpleTranslationVo {
 	private String content;
 	private String uploaderName;
-	private String uploaderId;
+	private String transTitle;
+	private int uploaderId;
 	private int likeNum;
 	private int transId;
 }

@@ -6,16 +6,20 @@ import net.yunyi.back.common.BizException;
 import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.Article;
 import net.yunyi.back.persistence.entity.ArticleSegTrans;
+import net.yunyi.back.persistence.entity.ArticleTextSeg;
 import net.yunyi.back.persistence.entity.ArticleTrans;
 import net.yunyi.back.persistence.entity.TransComment;
 import net.yunyi.back.persistence.entity.TransLike;
 import net.yunyi.back.persistence.entity.TransSegLike;
 import net.yunyi.back.persistence.entity.TransSegStats;
 import net.yunyi.back.persistence.entity.TransStats;
+import net.yunyi.back.persistence.entity.User;
 import net.yunyi.back.persistence.mapper.ArticleTransMapper;
 import net.yunyi.back.persistence.param.UploadTransParam;
 import net.yunyi.back.persistence.service.article.IArticleService;
+import net.yunyi.back.persistence.service.common.IUserService;
 import net.yunyi.back.persistence.service.trans.IArticleSegTransService;
+import net.yunyi.back.persistence.service.trans.IArticleTextSegService;
 import net.yunyi.back.persistence.service.trans.IArticleTransService;
 import net.yunyi.back.persistence.service.trans.ITransCommentService;
 import net.yunyi.back.persistence.service.trans.ITransLikeService;
@@ -24,10 +28,13 @@ import net.yunyi.back.persistence.service.trans.ITransSegStatsService;
 import net.yunyi.back.persistence.service.trans.ITransStatsService;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
+import net.yunyi.back.persistence.vo.TranslationDetailVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +50,9 @@ import java.util.stream.Collectors;
 public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, ArticleTrans> implements IArticleTransService {
 	@Autowired
 	IArticleSegTransService articleSegTransService;
+
+	@Autowired
+	IArticleTextSegService articleTextSegService;
 
 	@Autowired
 	ITransLikeService transLikeService;
@@ -62,6 +72,9 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 	@Autowired
 	ITransSegLikeService transSegLikeService;
 
+	@Autowired
+	IUserService userService;
+
 	private static QueryWrapper<TransLike> queryLikeTableById(int transId, int userId) {
 		return new QueryWrapper<TransLike>().eq("trans_id", transId).eq("user_id", userId);
 	}
@@ -76,7 +89,14 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		ArticleTrans articleTrans = new ArticleTrans();
 		articleTrans.setArticleId(param.getArticleId());
 		articleTrans.setUploaderId(userId);
+		articleTrans.setTransTitle(param.getTransTitle());
 		save(articleTrans);
+
+		TransStats transStats = new TransStats();
+		transStats.setTransId(articleTrans.getId().intValue());
+		transStats.setCommentNum(0);
+		transStats.setLikeNum(0);
+		transStatsService.save(transStats);
 
 		saveTranslation(articleTrans.getId().intValue(), param);
 
@@ -90,11 +110,6 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 			articleService.updateById(article);
 		}
 
-		TransStats transStats = new TransStats();
-		transStats.setTransId(articleTrans.getId().intValue());
-		transStats.setCommentNum(0);
-		transStats.setLikeNum(0);
-		transStatsService.save(transStats);
 
 		return articleTrans.getId().intValue();
 	}
@@ -213,6 +228,52 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 	}
 
 	@Override
+	public TranslationDetailVo getTranslationDetail(final int transId) {
+		ArticleTrans trans = getById(transId);
+		if (trans == null) {
+			throw new BizException(YunyiCommonEnum.TRANS_NOT_EXIST);
+		}
+
+		int articleId = trans.getArticleId();
+		Article article = articleService.getById(articleId);
+		if (article == null) {
+			throw new BizException(YunyiCommonEnum.ARTICLE_NOT_FOUND);
+		}
+
+		List<ArticleSegTrans> segTransList = articleSegTransService.list(new QueryWrapper<ArticleSegTrans>().eq("trans_id", transId));
+		segTransList.sort((t1, t2) -> t1.getTransSeq() > t2.getTransSeq() ? 1 : 0);
+
+		List<TranslationDetailVo.TransSegment> transSegments = new ArrayList<>();
+		for (ArticleSegTrans segTrans : segTransList) {
+			TranslationDetailVo.TransSegment transSegment = new TranslationDetailVo.TransSegment();
+			transSegment.setSegments(new ArrayList<>());
+			String[] refIds = segTrans.getRefIds().split(","); // 用,分割
+			for (String refId : refIds) {
+				int textSegId = Integer.parseInt(refId);
+				ArticleTextSeg seg = articleTextSegService.getById(textSegId);
+				transSegment.getSegments().add(seg);
+			}
+			transSegment.setTrans(segTrans);
+			transSegments.add(transSegment);
+		}
+
+		int uploaderId = trans.getUploaderId();
+		User user = userService.getById(uploaderId);
+
+		if (user == null) {
+			throw new BizException(YunyiCommonEnum.TRANS_USER_NOT_FOUND);
+		}
+
+		user.setAge(0);
+		user.setEmail(null);
+		user.setPhone(null);
+
+		TransStats stats = transStatsService.getById(transId);
+
+		return new TranslationDetailVo(article, stats, user, transSegments);
+	}
+
+	@Override
 	public boolean likeTransSeg(final int userId, final int transSegId) {
 		QueryWrapper<TransSegLike> query = querySegLikeTableById(transSegId, userId);
 		if (transSegLikeService.getOne(query) != null) {
@@ -253,12 +314,22 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 	}
 
 	private void saveTranslation(int transId, UploadTransParam param) {
+		int textSegCount = articleTextSegService.count(new QueryWrapper<ArticleTextSeg>().eq("article_id", param.getArticleId()));
+		int refCount = 0;
 		for (int i = 0; i < param.getSegmentList().size(); i++) {
 			UploadTransParam.TransSegment transSegment = param.getSegmentList().get(i);
 			ArticleSegTrans segTrans = new ArticleSegTrans();
+			transSegment.getRefSegIds().forEach(id -> {
+				if (articleTextSegService.getById(id) == null) {
+					throw new BizException(YunyiCommonEnum.TRANS_TEXT_SEG_NOT_EXISTS);
+				}
+			});
+			refCount += transSegment.getRefSegIds().size();
+			String refIds = StringUtils.join(transSegment.getRefSegIds(), ",");
 			segTrans.setTransSeq(i);
 			segTrans.setTransId(transId);
 			segTrans.setContent(transSegment.getTranslationContent());
+			segTrans.setRefIds(refIds);
 			articleSegTransService.save(segTrans);
 
 			TransSegStats stats = new TransSegStats();
@@ -266,6 +337,9 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 			stats.setLikeNum(0);
 			stats.setCommentNum(0);
 			transSegStatsService.save(stats);
+		}
+		if (refCount != textSegCount) {
+			throw new BizException(YunyiCommonEnum.TRANS_SEG_NUMBER_ERROR);
 		}
 	}
 

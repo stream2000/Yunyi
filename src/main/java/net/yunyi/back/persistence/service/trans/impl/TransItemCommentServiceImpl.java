@@ -10,6 +10,7 @@ import net.yunyi.back.persistence.entity.TransItemComment;
 import net.yunyi.back.persistence.entity.TransSegStats;
 import net.yunyi.back.persistence.mapper.TransItemCommentMapper;
 import net.yunyi.back.persistence.service.trans.ITransItemCommentService;
+import net.yunyi.back.persistence.service.trans.ITransSegStatsService;
 import net.yunyi.back.persistence.vo.TransSegCommentVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class TransItemCommentServiceImpl extends ServiceImpl<TransItemCommentMap
 	Logger logger = LoggerFactory.getLogger(TransItemCommentServiceImpl.class);
 
 	@Autowired
-	TransSegStatsServiceImpl transSegStatsService;
+	ITransSegStatsService transSegStatsService;
 
 	@Override
 	@Transactional

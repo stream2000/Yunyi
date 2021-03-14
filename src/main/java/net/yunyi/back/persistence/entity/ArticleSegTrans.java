@@ -28,9 +28,15 @@ public class ArticleSegTrans implements Serializable {
 	private Long id;
 
 	/**
-	 * 对应原文切分的id
+	 * 翻译id
 	 */
 	private Integer transId;
+
+	/**
+	 * 切分id
+	 */
+
+	private String refIds;
 
 	/**
 	 * 翻译序号

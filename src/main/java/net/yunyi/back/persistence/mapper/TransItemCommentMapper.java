@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.yunyi.back.persistence.entity.TransItemComment;
-import net.yunyi.back.persistence.vo.TransCommentVo;
 import net.yunyi.back.persistence.vo.TransSegCommentVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,5 +21,5 @@ import org.apache.ibatis.annotations.Param;
 public interface TransItemCommentMapper extends BaseMapper<TransItemComment> {
 	IPage<TransSegCommentVo> getTransSegComments(Page<?> page, QueryWrapper<TransSegCommentVo> ew);
 
-	TransSegCommentVo getTransSegComment(@Param(Constants.WRAPPER) Wrapper<TransCommentVo> ew);
+	TransSegCommentVo getTransSegComment(@Param(Constants.WRAPPER) Wrapper<TransSegCommentVo> ew);
 }

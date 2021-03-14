@@ -27,6 +27,7 @@ public class GlobalExceptionHandler {
 	@ResponseBody
 	public ApiResult bizExceptionHandler(HttpServletRequest req, BizException e) {
 		logger.error("Business exception, caused by {} ", e.getErrorMsg());
+		e.printStackTrace();
 		return ApiResult.error(e.getErrorCode(), e.getErrorMsg());
 	}
 

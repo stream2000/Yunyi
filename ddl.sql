@@ -85,6 +85,7 @@ create table article_trans
     id          bigint auto_increment COMMENT '唯一id',
     article_id  int COMMENT '翻译对应原文id',
     uploader_id int COMMENT '上传者id',
+    trans_title varchar(100) COMMENT '翻译标题',
     primary key (id)
 ) COMMENT '原文切分的翻译表';
 
@@ -92,8 +93,9 @@ drop table if exists article_seg_trans;
 create table article_seg_trans
 (
     id        bigint auto_increment COMMENT '唯一id',
-    trans_id  int COMMENT '对应原文切分的id',
-    trans_seq int COMMENT '翻译序号',
+    trans_id  int COMMENT '翻译id',
+    trans_seq int COMMENT '翻译的顺序',
+    ref_ids   varchar(100) COMMENT '引用id',
     content   text COMMENT '翻译内容',
     primary key (id)
 ) COMMENT '原文切分的翻译表';

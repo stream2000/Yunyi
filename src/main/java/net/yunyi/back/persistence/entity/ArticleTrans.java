@@ -37,5 +37,9 @@ public class ArticleTrans implements Serializable {
 	 */
 	private Integer articleId;
 
+	/**
+	 * 对应原文id
+	 */
+	private String transTitle;
 
 }

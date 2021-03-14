@@ -118,6 +118,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 		articleStatsService.removeById(articleId);
 		articleLikeService.remove(new QueryWrapper<ArticleLike>().eq("article_id", articleId));
 		requestTransService.remove(new QueryWrapper<RequestTrans>().eq("article_id", articleId));
+		articleTextSegService.remove(new QueryWrapper<ArticleTextSeg>().eq("article_id", articleId));
 		return true;
 	}
 

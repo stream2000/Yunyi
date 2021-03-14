@@ -40,21 +40,27 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		boolean mustLogin = method.getAnnotation(LoginRequired.class) != null;
 		boolean enableLogin = method.getAnnotation(LoginEnable.class) != null;
 
-		// 有 @LoginRequired 注解，需要认证
-		if (mustLogin || enableLogin) {
-			// 这写你拦截需要干的事儿，比如取缓存，SESSION，权限判断等
-			String token = request.getParameter("token");
-			if (mustLogin && !StringUtils.hasText(token)) {
-				throw new BizException(YunyiCommonEnum.AUTH);
+		try {
+			if (mustLogin || enableLogin) {
+				// 这写你拦截需要干的事儿，比如取缓存，SESSION，权限判断等
+				String token = request.getParameter("token");
+				if (mustLogin && !StringUtils.hasText(token)) {
+					throw new BizException(YunyiCommonEnum.AUTH);
+				}
+				long uid = JWTUtils.getInstance().checkToken(token);
+				User user = userService.getById(uid);
+				if (user == null) {
+					throw new BizException(YunyiCommonEnum.AUTH_USER_NOT_FOUND);
+				}
+				request.setAttribute("user", user);
+				return true;
 			}
-			long uid = JWTUtils.getInstance().checkToken(token);
-			User user = userService.getById(uid);
-			if (user == null) {
-				throw new BizException(YunyiCommonEnum.AUTH_USER_NOT_FOUND);
+		} catch (Exception e) {
+			if (mustLogin) {
+				throw e;
 			}
-			request.setAttribute("user", user);
-			return true;
 		}
+
 		return true;
 	}
 }

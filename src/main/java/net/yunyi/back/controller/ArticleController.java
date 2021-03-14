@@ -12,11 +12,13 @@ import net.yunyi.back.common.response.ApiResult;
 import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.Article;
 import net.yunyi.back.persistence.entity.ArticleComment;
+import net.yunyi.back.persistence.entity.ArticleTextSeg;
 import net.yunyi.back.persistence.entity.User;
 import net.yunyi.back.persistence.param.AddArticleCommentParam;
 import net.yunyi.back.persistence.param.UploadArticleParam;
 import net.yunyi.back.persistence.service.article.IArticleCommentService;
 import net.yunyi.back.persistence.service.article.IArticleService;
+import net.yunyi.back.persistence.service.trans.IArticleTextSegService;
 import net.yunyi.back.persistence.vo.ArticleCommentPageVo;
 import net.yunyi.back.persistence.vo.ArticleCommentVo;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
@@ -62,11 +64,14 @@ public class ArticleController {
 	@Autowired
 	IArticleCommentService articleCommentService;
 
+	@Autowired
+	IArticleTextSegService articleTextSegService;
+
 	@GetMapping("/{id}")
 	@ResponseBody
 	@LoginEnable
 	@ApiOperation(value = "获取单个文章的具体内容, 在文章界面使用")
-	public ApiResult<ArticleListItemVo> getArticleById(@RequestAttribute("user") User user, @PathVariable int id) {
+	public ApiResult<ArticleListItemVo> getArticleById(@Nullable @RequestAttribute("user") User user, @PathVariable int id) {
 		ArticleListItemVo article = articleService.getArticleByQuery(new QueryWrapper<ArticleListItemVo>().eq("a.id", id));
 		return ApiResult.ok(article);
 	}
@@ -75,7 +80,7 @@ public class ArticleController {
 	@ResponseBody
 	@LoginEnable
 	@ApiOperation(value = "获取首页文章数据, 支持按热度排序（sort=hot)，按类别分类，带分页")
-	public ApiResult<NewsPageVo> getArticles(@RequestAttribute User user, @RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @Nullable @RequestParam final String genre, @RequestParam @Nullable String sort) {
+	public ApiResult<NewsPageVo> getArticles(@Nullable @RequestAttribute User user, @RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @Nullable @RequestParam final String genre, @RequestParam @Nullable String sort) {
 		IPage<ArticleListItemVo> articles;
 		int articleCount;
 		// construct the query
@@ -178,6 +183,18 @@ public class ArticleController {
 	@LoginRequired
 	public ApiResult<Boolean> requestTrans(@PathVariable int articleId, @RequestAttribute("user") User user) {
 		return ApiResult.ok(articleService.requestTrans(articleId, user.getId().intValue()));
+	}
+
+	@GetMapping("/{id}/segs")
+	@ResponseBody
+	@ApiOperation(value = "删除文章")
+	public ApiResult<List<ArticleTextSeg>> getArticleTextSegs(@PathVariable int id) {
+
+		QueryWrapper<ArticleTextSeg> query = new QueryWrapper<ArticleTextSeg>().eq("article_id", id);
+		List<ArticleTextSeg> result = articleTextSegService.list(query);
+		result.sort((o1, o2) -> o1.getSequenceNumber() > o2.getSequenceNumber() ? 1 : 0);
+
+		return ApiResult.ok(result);
 	}
 
 	@PostMapping("/comment/add")

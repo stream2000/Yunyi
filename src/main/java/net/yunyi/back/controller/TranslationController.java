@@ -23,6 +23,7 @@ import net.yunyi.back.persistence.vo.TransCommentPageVo;
 import net.yunyi.back.persistence.vo.TransCommentVo;
 import net.yunyi.back.persistence.vo.TransSegCommentPageVo;
 import net.yunyi.back.persistence.vo.TransSegCommentVo;
+import net.yunyi.back.persistence.vo.TranslationDetailVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.Collections;
 
@@ -57,7 +59,7 @@ public class TranslationController {
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "上传翻译接口, 返回翻译id")
-	public ApiResult<Integer> uploadTranslation(@RequestAttribute("user") User user, @RequestBody UploadTransParam param) {
+	public ApiResult<Integer> uploadTranslation(@RequestAttribute("user") User user, @RequestBody @Valid UploadTransParam param) {
 		for (UploadTransParam.TransSegment segment : param.getSegmentList()) {
 			if (segment == null || segment.getRefSegIds() == null || segment.getRefSegIds().isEmpty()) {
 				throw new BizException(YunyiCommonEnum.TRANS_PARAM_ERROR);
@@ -79,7 +81,7 @@ public class TranslationController {
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "修改翻译")
-	public ApiResult<Integer> modifyTranslation(@RequestAttribute("user") User user, @PathVariable int id, @RequestBody UploadTransParam param) {
+	public ApiResult<Integer> modifyTranslation(@RequestAttribute("user") User user, @PathVariable int id, @RequestBody @Valid UploadTransParam param) {
 		return ApiResult.ok(articleTransService.modifyTranslation(user.getId().intValue(), param));
 	}
 
@@ -94,7 +96,7 @@ public class TranslationController {
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "添加对整个翻译的评论")
-	public ApiResult<Integer> addTranslationComment(@RequestAttribute(value = "user") User user, @RequestBody AddTranslationCommentParam param) {
+	public ApiResult<Integer> addTranslationComment(@RequestAttribute(value = "user") User user, @RequestBody @Valid AddTranslationCommentParam param) {
 		return ApiResult.ok(transCommentService.addTransComment(user.getId().intValue(), param.getTransId(), param.getContent(), param.isHasRefComment(), param.getRefCommentId()));
 	}
 
@@ -139,6 +141,14 @@ public class TranslationController {
 	@ApiOperation(value = "取消点赞文章")
 	public ApiResult<Boolean> cancelLikeTrans(@RequestAttribute User user, @PathVariable int transId) {
 		return ApiResult.ok(articleTransService.cancelLikeTrans(transId, user.getId().intValue()));
+	}
+
+	@GetMapping("/{transId}/detail")
+	@ResponseBody
+	@LoginEnable
+	@ApiOperation(value = "获取翻译详情(分段数据)")
+	public ApiResult<TranslationDetailVo> getTranslationDetail(@PathVariable final int transId) {
+		return ApiResult.ok(articleTransService.getTranslationDetail(transId));
 	}
 
 	@PostMapping("/detail/comment/add")
