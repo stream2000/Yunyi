@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.yunyi.back.persistence.mapper.ArticleTransMapper">
+
+    <delete id="deleteArticleTransData">
+        delete yunyi.trans_comment, yunyi.article_seg_trans, yunyi.trans_seg_stats, yunyi.trans_seg_like
+        from article_seg_trans seg
+                 left join trans_seg_stats ts on ts.trans_seg_id = seg.id
+                 left join trans_seg_like tsl on ts.trans_seg_id = tsl.trans_seg_id
+                 left join trans_item_comment tic on ts.trans_seg_id = tic.trans_seg_id
+        where seg.trans_id = #{transId}
+    </delete>
+
     <select id="getBestTranslation" resultType="net.yunyi.back.persistence.vo.SimpleTranslationVo">
         select t.id as trans_id, u.id as uploader_id, u.name as uploader_name, stats.like_num
         from article_trans t

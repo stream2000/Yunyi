@@ -21,7 +21,11 @@ public enum YunyiCommonEnum implements BaseErrorInfoInterface {
 
 	TRANS_NOT_EXIST(20002, "trans not exits"),
 
-	NO_PERMISSION_TO_DELETE(20003, "no permission to can delete")
+	NO_PERMISSION_TO_DELETE(20003, "no permission to can delete"),
+
+	TRANS_SEG_STATS_NOT_EXISTS(20004, "trans seg stats not exists"),
+
+	TRANS_SEG_NOT_EXISTS(20005, "trans seg not exists"),
 
 	// END
 	;

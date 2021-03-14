@@ -140,3 +140,20 @@ create table trans_like
     user_id  int,
     primary key (trans_id, user_id)
 ) COMMENT '翻译点赞表';
+
+drop table if exists trans_seg_stats;
+create table trans_seg_stats
+(
+    trans_seg_id int,
+    like_num     int,
+    comment_num  int,
+    primary key (trans_seg_id)
+) COMMENT '翻译统计表';
+
+drop table if exists trans_seg_like;
+create table trans_seg_like
+(
+    trans_seg_id int,
+    user_id      int,
+    primary key (trans_seg_id, user_id)
+) COMMENT '翻译点赞表';

@@ -7,14 +7,20 @@ import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.Article;
 import net.yunyi.back.persistence.entity.ArticleSegTrans;
 import net.yunyi.back.persistence.entity.ArticleTrans;
+import net.yunyi.back.persistence.entity.TransComment;
 import net.yunyi.back.persistence.entity.TransLike;
+import net.yunyi.back.persistence.entity.TransSegLike;
+import net.yunyi.back.persistence.entity.TransSegStats;
 import net.yunyi.back.persistence.entity.TransStats;
 import net.yunyi.back.persistence.mapper.ArticleTransMapper;
 import net.yunyi.back.persistence.param.UploadTransParam;
 import net.yunyi.back.persistence.service.article.IArticleService;
 import net.yunyi.back.persistence.service.trans.IArticleSegTransService;
 import net.yunyi.back.persistence.service.trans.IArticleTransService;
+import net.yunyi.back.persistence.service.trans.ITransCommentService;
 import net.yunyi.back.persistence.service.trans.ITransLikeService;
+import net.yunyi.back.persistence.service.trans.ITransSegLikeService;
+import net.yunyi.back.persistence.service.trans.ITransSegStatsService;
 import net.yunyi.back.persistence.service.trans.ITransStatsService;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
@@ -47,8 +53,21 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 	@Autowired
 	IArticleService articleService;
 
+	@Autowired
+	ITransSegStatsService transSegStatsService;
+
+	@Autowired
+	ITransCommentService transCommentService;
+
+	@Autowired
+	ITransSegLikeService transSegLikeService;
+
 	private static QueryWrapper<TransLike> queryLikeTableById(int transId, int userId) {
 		return new QueryWrapper<TransLike>().eq("trans_id", transId).eq("user_id", userId);
+	}
+
+	private static QueryWrapper<TransSegLike> querySegLikeTableById(int transSegId, int userId) {
+		return new QueryWrapper<TransSegLike>().eq("trans_seg_id", transSegId).eq("user_id", userId);
 	}
 
 	@Override
@@ -110,17 +129,21 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 			throw new BizException(YunyiCommonEnum.NO_PERMISSION_TO_DELETE);
 		}
 
+		// delete the trans
 		removeById(transId);
-		transStatsService.remove(new QueryWrapper<TransStats>().eq("trans_id", transId));
+
+		// set has trans
 		int transCount = count(new QueryWrapper<ArticleTrans>().eq("article_id", trans.getArticleId()));
 		if (transCount == 0) {
 			article.setHasTrans(false);
 			articleService.updateById(article);
 		}
 
-		articleSegTransService.remove(new QueryWrapper<ArticleSegTrans>().eq("trans_id", transId));
+		// delete related data
+		baseMapper.deleteArticleTransData(transId);
 
-		// TODO delete comment and like
+		transCommentService.remove(new QueryWrapper<TransComment>().eq("trans_id", transId));
+		transLikeService.remove(new QueryWrapper<TransLike>().eq("trans_id", transId));
 		return true;
 	}
 
@@ -161,7 +184,7 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 	public boolean likeTrans(final int transId, final int userId) {
 		QueryWrapper<TransLike> query = queryLikeTableById(transId, userId);
 		if (transLikeService.getOne(query) != null) {
-			return true;
+			return false;
 		}
 		TransLike like = new TransLike();
 		like.setTransId(transId);
@@ -189,6 +212,39 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		return true;
 	}
 
+	@Override
+	public boolean likeTransSeg(final int userId, final int transSegId) {
+		QueryWrapper<TransSegLike> query = querySegLikeTableById(transSegId, userId);
+		if (transSegLikeService.getOne(query) != null) {
+			return false;
+		}
+		TransSegLike like = new TransSegLike();
+		like.setTransSegId(transSegId);
+		like.setUserId(userId);
+		transSegLikeService.save(like);
+		TransSegStats stats = transSegStatsService.getById(transSegId);
+		int currentLikeNum = stats.getLikeNum() != null ? stats.getLikeNum() : 0;
+		stats.setLikeNum(currentLikeNum + 1);
+		transSegStatsService.updateById(stats);
+		return true;
+	}
+
+	@Override
+	public boolean cancelLikeTransSeg(final int userId, final int transSegId) {
+		QueryWrapper<TransSegLike> query = querySegLikeTableById(transSegId, userId);
+		if (transSegLikeService.getOne(query) == null) {
+			return false;
+		}
+
+		transSegLikeService.remove(querySegLikeTableById(transSegId, userId));
+
+		TransSegStats stats = transSegStatsService.getById(transSegId);
+		int currentLikeNum = stats.getLikeNum() != null ? stats.getLikeNum() : 1;
+		stats.setLikeNum(currentLikeNum - 1);
+		transSegStatsService.updateById(stats);
+		return true;
+	}
+
 	private String getSimpleTransContent(int transId) {
 		List<ArticleSegTrans> trans = articleSegTransService.list(new QueryWrapper<ArticleSegTrans>().eq("trans_id", transId).orderByAsc("trans_seq"));
 		String content = trans.stream().map(ArticleSegTrans::getContent).collect(Collectors.joining(""));
@@ -204,6 +260,12 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 			segTrans.setTransId(transId);
 			segTrans.setContent(transSegment.getTranslationContent());
 			articleSegTransService.save(segTrans);
+
+			TransSegStats stats = new TransSegStats();
+			stats.setTransSegId(segTrans.getId().intValue());
+			stats.setLikeNum(0);
+			stats.setCommentNum(0);
+			transSegStatsService.save(stats);
 		}
 	}
 

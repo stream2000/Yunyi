@@ -22,4 +22,6 @@ public interface ArticleTransMapper extends BaseMapper<ArticleTrans> {
 	SimpleTranslationVo getBestTranslation(@Param(Constants.WRAPPER) Wrapper<ArticleTrans> ew);
 
 	List<SimpleTranslationVo> getSimpleTranslations(@Param(Constants.WRAPPER) Wrapper<ArticleTrans> ew);
+
+	void deleteArticleTransData(int transId);
 }

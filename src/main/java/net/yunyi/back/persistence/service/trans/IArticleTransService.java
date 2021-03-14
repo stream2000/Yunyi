@@ -31,4 +31,7 @@ public interface IArticleTransService extends IService<ArticleTrans> {
 
 	boolean cancelLikeTrans(int transId, final int userId);
 
+	boolean likeTransSeg(int userId, int transSegId);
+
+	boolean cancelLikeTransSeg(int userId, int transSegId);
 }

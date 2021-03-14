@@ -12,5 +12,4 @@ import net.yunyi.back.persistence.entity.ArticleSegTrans;
  * @since 2021-03-08
  */
 public interface IArticleSegTransService extends IService<ArticleSegTrans> {
-
 }
