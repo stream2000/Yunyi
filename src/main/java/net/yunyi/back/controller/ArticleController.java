@@ -89,7 +89,7 @@ public class ArticleController {
 
 		// filter by genre
 		if (StringUtils.isNotBlank(genre)) {
-			query.eq("a.genre", query);
+			query.eq("a.genre", genre);
 			countQuery.eq("genre", genre);
 		}
 
