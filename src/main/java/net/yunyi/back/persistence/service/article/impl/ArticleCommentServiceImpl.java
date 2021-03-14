@@ -29,7 +29,7 @@ public class ArticleCommentServiceImpl extends ServiceImpl<ArticleCommentMapper,
 	IArticleStatsService articleStatsService;
 
 	private int getArticleCommentFloor(int articleId) {
-		return count(new QueryWrapper<ArticleComment>().eq("article_id", articleId));
+		return count(new QueryWrapper<ArticleComment>().eq("article_id", articleId)) + 1;
 	}
 
 	private RefArticleComment mapArticleCommentToRef(ArticleCommentVo vo) {

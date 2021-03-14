@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.stream.Collectors;
+
 /**
  * <p>
  * 翻译评论表 服务实现类
@@ -38,7 +40,7 @@ public class TransCommentServiceImpl extends ServiceImpl<TransCommentMapper, Tra
 	}
 
 	private int getTransCommentFloor(int articleId) {
-		return count(new QueryWrapper<TransComment>().eq("trans_id", articleId));
+		return count(new QueryWrapper<TransComment>().eq("trans_id", articleId)) + 1;
 	}
 
 	@Override
@@ -88,6 +90,7 @@ public class TransCommentServiceImpl extends ServiceImpl<TransCommentMapper, Tra
 				commentVo.setRefComment(mapTransCommentToRef(refComment));
 			}
 		}
+		result.setRecords(result.getRecords().stream().sorted().collect(Collectors.toList()));
 		return result;
 	}
 }

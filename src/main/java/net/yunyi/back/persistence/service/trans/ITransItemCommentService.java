@@ -12,5 +12,7 @@ import net.yunyi.back.persistence.entity.TransItemComment;
  * @since 2021-03-07
  */
 public interface ITransItemCommentService extends IService<TransItemComment> {
+	int addTransItemComment(int senderId, int transSegId, String content);
 
+	boolean deleteTransItemComment(int transItemId);
 }

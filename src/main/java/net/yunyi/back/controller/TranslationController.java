@@ -8,14 +8,17 @@ import net.yunyi.back.common.BizException;
 import net.yunyi.back.common.LoginRequired;
 import net.yunyi.back.common.response.ApiResult;
 import net.yunyi.back.common.response.YunyiCommonEnum;
+import net.yunyi.back.persistence.entity.TransComment;
 import net.yunyi.back.persistence.entity.User;
 import net.yunyi.back.persistence.param.AddTranslationCommentParam;
 import net.yunyi.back.persistence.param.AddTranslationSegCommentParam;
 import net.yunyi.back.persistence.param.UploadTransParam;
 import net.yunyi.back.persistence.service.trans.IArticleTransService;
 import net.yunyi.back.persistence.service.trans.ITransCommentService;
+import net.yunyi.back.persistence.service.trans.ITransItemCommentService;
 import net.yunyi.back.persistence.vo.ArticleCommentVo;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
+import net.yunyi.back.persistence.vo.TransCommentPageVo;
 import net.yunyi.back.persistence.vo.TransCommentVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -44,6 +47,9 @@ public class TranslationController {
 
 	@Autowired
 	ITransCommentService transCommentService;
+
+	@Autowired
+	ITransItemCommentService transItemCommentService;
 
 	@PostMapping("/upload")
 	@ResponseBody
@@ -101,11 +107,20 @@ public class TranslationController {
 	@GetMapping("/{id}/comments")
 	@ResponseBody
 	@ApiOperation(value = "获取翻译界面的评论")
-	public ApiResult<List<TransCommentVo>> getTranslationComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
+	public ApiResult<TransCommentPageVo> getTranslationComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
 		QueryWrapper<TransCommentVo> query = new QueryWrapper<>();
 		query.eq("c.trans_id", id);
 		IPage<TransCommentVo> result = transCommentService.getTransComments(new Page<>(pageId, pageSize), query);
-		return ApiResult.ok(result.getRecords());
+
+		int commentCount = transCommentService.count(new QueryWrapper<TransComment>().eq("trans_id", id));
+
+		// compute the page count
+		int pageCount = commentCount / pageSize;
+		if (pageCount == 0) {
+			pageCount = 1;
+		}
+
+		return ApiResult.ok(new TransCommentPageVo(result.getRecords(), pageCount));
 	}
 
 	@PostMapping("/{transId}/like")
@@ -129,7 +144,7 @@ public class TranslationController {
 	@LoginRequired
 	@ApiOperation(value = "添加对翻译片段的评论")
 	public ApiResult<Integer> addDetailTranslationComment(@RequestAttribute(value = "user") User user, @RequestBody AddTranslationSegCommentParam param) {
-		return ApiResult.ok();
+		return ApiResult.ok(transItemCommentService.addTransItemComment(user.getId().intValue(), param.getTransSegId(), param.getContent()));
 	}
 
 	@PostMapping("/detail/comment/{id}/delete")

@@ -1,6 +1,7 @@
 package net.yunyi.back.controller;
 
 import net.yunyi.back.common.BizException;
+import net.yunyi.back.common.LoginEnable;
 import net.yunyi.back.common.LoginRequired;
 import net.yunyi.back.common.auth.JWTUtils;
 import net.yunyi.back.common.response.YunyiCommonEnum;
@@ -30,16 +31,20 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		if (!(handler instanceof HandlerMethod)) {
 			return true;
 		}
+
 		// ①:START 方法注解级拦截器
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
 		Method method = handlerMethod.getMethod();
+
 		// 判断接口是否需要登录
-		LoginRequired methodAnnotation = method.getAnnotation(LoginRequired.class);
+		boolean mustLogin = method.getAnnotation(LoginRequired.class) != null;
+		boolean enableLogin = method.getAnnotation(LoginEnable.class) != null;
+
 		// 有 @LoginRequired 注解，需要认证
-		if (methodAnnotation != null) {
+		if (mustLogin || enableLogin) {
 			// 这写你拦截需要干的事儿，比如取缓存，SESSION，权限判断等
 			String token = request.getParameter("token");
-			if (!StringUtils.hasText(token)) {
+			if (mustLogin && !StringUtils.hasText(token)) {
 				throw new BizException(YunyiCommonEnum.AUTH);
 			}
 			long uid = JWTUtils.getInstance().checkToken(token);

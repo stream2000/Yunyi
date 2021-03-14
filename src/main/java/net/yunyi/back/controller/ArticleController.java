@@ -6,15 +6,18 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiOperation;
 import net.yunyi.back.common.BizException;
+import net.yunyi.back.common.LoginEnable;
 import net.yunyi.back.common.LoginRequired;
 import net.yunyi.back.common.response.ApiResult;
 import net.yunyi.back.common.response.YunyiCommonEnum;
 import net.yunyi.back.persistence.entity.Article;
+import net.yunyi.back.persistence.entity.ArticleComment;
 import net.yunyi.back.persistence.entity.User;
 import net.yunyi.back.persistence.param.AddArticleCommentParam;
 import net.yunyi.back.persistence.param.UploadArticleParam;
 import net.yunyi.back.persistence.service.article.IArticleCommentService;
 import net.yunyi.back.persistence.service.article.IArticleService;
+import net.yunyi.back.persistence.vo.ArticleCommentPageVo;
 import net.yunyi.back.persistence.vo.ArticleCommentVo;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import net.yunyi.back.persistence.vo.NewsPageVo;
@@ -61,16 +64,18 @@ public class ArticleController {
 
 	@GetMapping("/{id}")
 	@ResponseBody
+	@LoginEnable
 	@ApiOperation(value = "获取单个文章的具体内容, 在文章界面使用")
-	public ApiResult<ArticleListItemVo> getArticleById(@PathVariable int id) {
+	public ApiResult<ArticleListItemVo> getArticleById(@RequestAttribute("user") User user, @PathVariable int id) {
 		ArticleListItemVo article = articleService.getArticleByQuery(new QueryWrapper<ArticleListItemVo>().eq("a.id", id));
 		return ApiResult.ok(article);
 	}
 
 	@GetMapping("/all")
 	@ResponseBody
+	@LoginEnable
 	@ApiOperation(value = "获取首页文章数据, 支持按热度排序（sort=hot)，按类别分类，带分页")
-	public ApiResult<NewsPageVo> getArticles(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @Nullable @RequestParam final String genre, @RequestParam @Nullable String sort) {
+	public ApiResult<NewsPageVo> getArticles(@RequestAttribute User user, @RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @Nullable @RequestParam final String genre, @RequestParam @Nullable String sort) {
 		IPage<ArticleListItemVo> articles;
 		int articleCount;
 		// construct the query
@@ -175,7 +180,6 @@ public class ArticleController {
 		return ApiResult.ok(articleService.requestTrans(articleId, user.getId().intValue()));
 	}
 
-
 	@PostMapping("/comment/add")
 	@ResponseBody
 	@LoginRequired
@@ -195,9 +199,16 @@ public class ArticleController {
 	@GetMapping("/{id}/comments")
 	@ResponseBody
 	@ApiOperation(value = "获取翻译界面的评论")
-	public ApiResult<List<ArticleCommentVo>> getArticleComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
-		return ApiResult.ok(articleCommentService.getArticleComments(new Page<>(pageId, pageSize), id).getRecords().stream().sorted().collect(Collectors.toList()));
+	public ApiResult<ArticleCommentPageVo> getArticleComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
+		List<ArticleCommentVo> articleCommentVos = articleCommentService.getArticleComments(new Page<>(pageId, pageSize), id).getRecords().stream().sorted().collect(Collectors.toList());
+		int commentCount = articleCommentService.count(new QueryWrapper<ArticleComment>().eq("article_id", id));
+
+		// compute the page count
+		int pageCount = commentCount / pageSize;
+		if (pageCount == 0) {
+			pageCount = 1;
+		}
+		return ApiResult.ok(new ArticleCommentPageVo(articleCommentVos, pageCount));
 	}
 
 }
-
