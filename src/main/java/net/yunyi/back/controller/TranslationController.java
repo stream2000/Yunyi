@@ -164,7 +164,7 @@ public class TranslationController {
 	@LoginRequired
 	@ApiOperation(value = "删除对翻译片段的评论")
 	public ApiResult<Boolean> deleteDetailTranslationComment(@PathVariable int id) {
-		return ApiResult.ok(transCommentService.deleteArticleComment(id));
+		return ApiResult.ok(transItemCommentService.deleteTransItemComment(id));
 	}
 
 	@PostMapping("/detail/{transSegId}/like")
@@ -187,7 +187,7 @@ public class TranslationController {
 	@ResponseBody
 	@LoginEnable
 	@ApiOperation(value = "获取单句翻译的评论")
-	public ApiResult<TransSegCommentPageVo> getDetailTranslationComment(@RequestAttribute User user, @RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
+	public ApiResult<TransSegCommentPageVo> getDetailTranslationComment(@Nullable @RequestAttribute User user, @RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
 		IPage<TransSegCommentVo> result = transItemCommentService.getTransSegComments(new Page<>(pageId, pageSize), id);
 
 		int commentCount = transItemCommentService.count(new QueryWrapper<TransItemComment>().eq("trans_seg_id", id));

@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -165,6 +166,9 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 	@Override
 	public SimpleTranslationVo getTranslation(final int transId) {
 		SimpleTranslationVo vo = baseMapper.getBestTranslation(new QueryWrapper<ArticleTrans>().eq("trans_id", transId));
+		if (vo == null) {
+			throw new BizException(YunyiCommonEnum.TRANS_NOT_EXIST);
+		}
 		vo.setContent(getSimpleTransContent(transId));
 		return vo;
 	}
@@ -241,7 +245,7 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		}
 
 		List<ArticleSegTrans> segTransList = articleSegTransService.list(new QueryWrapper<ArticleSegTrans>().eq("trans_id", transId));
-		segTransList.sort((t1, t2) -> t1.getTransSeq() > t2.getTransSeq() ? 1 : 0);
+		segTransList.sort(Comparator.comparingInt(ArticleSegTrans::getTransSeq));
 
 		List<TranslationDetailVo.TransSegment> transSegments = new ArrayList<>();
 		for (ArticleSegTrans segTrans : segTransList) {

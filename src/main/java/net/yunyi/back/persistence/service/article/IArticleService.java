@@ -27,8 +27,6 @@ public interface IArticleService extends IService<Article> {
 
 	boolean requestTrans(int articleId, int userId);
 
-	IPage<ArticleListItemVo> getArticles(Page<ArticleListItemVo> page);
-
 	IPage<ArticleListItemVo> getArticlesByQuery(Page<ArticleListItemVo> page, QueryWrapper<ArticleListItemVo> query);
 
 	ArticleListItemVo getArticleByQuery(QueryWrapper<ArticleListItemVo> queryWrapper);

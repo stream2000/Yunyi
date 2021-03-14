@@ -43,7 +43,7 @@ public class TransItemCommentServiceImpl extends ServiceImpl<TransItemCommentMap
 		comment.setContent(content);
 		comment.setSenderId(senderId);
 		comment.setTransSegId(transSegId);
-		int floor = count(new QueryWrapper<TransItemComment>().eq("transSegId", transSegId)) + 1;
+		int floor = count(new QueryWrapper<TransItemComment>().eq("trans_seg_id", transSegId)) + 1;
 		comment.setFloor(floor);
 		save(comment);
 
