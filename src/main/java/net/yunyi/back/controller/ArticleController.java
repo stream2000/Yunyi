@@ -107,7 +107,7 @@ public class ArticleController {
 		}
 
 		if (StringUtils.isBlank(sort)) {
-			sort = SORT_BY_DEFAULT;
+			sort = SORT_BY_HOT;
 		}
 
 		if (hasTrans != null) {
