@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import net.yunyi.back.persistence.entity.Article;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
+import net.yunyi.back.persistence.vo.ArticleTranslationVo;
 
 import java.util.List;
 
@@ -35,4 +36,5 @@ public interface IArticleService extends IService<Article> {
 
 	boolean cancelLikeArticle(int articleId, final int userId);
 
+	ArticleTranslationVo getArticleTrans(int articleId);
 }

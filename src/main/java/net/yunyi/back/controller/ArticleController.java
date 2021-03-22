@@ -24,6 +24,7 @@ import net.yunyi.back.persistence.service.trans.IArticleTextSegService;
 import net.yunyi.back.persistence.vo.ArticleCommentPageVo;
 import net.yunyi.back.persistence.vo.ArticleCommentVo;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
+import net.yunyi.back.persistence.vo.ArticleTranslationVo;
 import net.yunyi.back.persistence.vo.NewsPageVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -249,7 +250,14 @@ public class ArticleController {
 		if (pageCount == 0) {
 			pageCount = 1;
 		}
-		return ApiResult.ok(new ArticleCommentPageVo(articleCommentVos, pageCount));
+		return ApiResult.ok(new ArticleCommentPageVo(articleCommentVos, pageCount, commentCount));
+	}
+
+	@GetMapping("/{id}/trans")
+	@ResponseBody
+	@ApiOperation(value = "获取文章的翻译（最佳翻译+所有翻译的缩略）")
+	public ApiResult<ArticleTranslationVo> getArticleTrans(@PathVariable int id) {
+		return ApiResult.ok(articleService.getArticleTrans(id));
 	}
 
 }

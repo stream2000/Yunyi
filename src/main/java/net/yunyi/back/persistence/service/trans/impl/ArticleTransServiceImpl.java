@@ -165,7 +165,8 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 
 	@Override
 	public SimpleTranslationVo getTranslation(final int transId) {
-		SimpleTranslationVo vo = baseMapper.getBestTranslation(new QueryWrapper<ArticleTrans>().eq("trans_id", transId));
+		SimpleTranslationVo vo = baseMapper.getBestTranslation(new QueryWrapper<ArticleTrans>().eq("trans_id",
+				transId));
 		if (vo == null) {
 			throw new BizException(YunyiCommonEnum.TRANS_NOT_EXIST);
 		}
@@ -194,8 +195,10 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		QueryWrapper<ArticleTrans> query = new QueryWrapper<>();
 		query.eq("article_id", vo.getId());
 		query.orderByDesc("stats.like_num * 3 + stats.comment_num * 4");
-
 		vo.setTranslations(baseMapper.getSimpleTranslations(query));
+		for (final SimpleTranslationVo translation : vo.getTranslations()) {
+			translation.setContent(getSimpleTransContent(translation.getTransId()));
+		}
 	}
 
 	@Override
@@ -244,7 +247,8 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 			throw new BizException(YunyiCommonEnum.ARTICLE_NOT_FOUND);
 		}
 
-		List<ArticleSegTrans> segTransList = articleSegTransService.list(new QueryWrapper<ArticleSegTrans>().eq("trans_id", transId));
+		List<ArticleSegTrans> segTransList = articleSegTransService.list(new QueryWrapper<ArticleSegTrans>().eq(
+				"trans_id", transId));
 		segTransList.sort(Comparator.comparingInt(ArticleSegTrans::getTransSeq));
 
 		List<TranslationDetailVo.TransSegment> transSegments = new ArrayList<>();
@@ -295,6 +299,7 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 	}
 
 	@Override
+	@Transactional
 	public boolean cancelLikeTransSeg(final int userId, final int transSegId) {
 		QueryWrapper<TransSegLike> query = querySegLikeTableById(transSegId, userId);
 		if (transSegLikeService.getOne(query) == null) {
@@ -310,15 +315,18 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		return true;
 	}
 
+
 	private String getSimpleTransContent(int transId) {
-		List<ArticleSegTrans> trans = articleSegTransService.list(new QueryWrapper<ArticleSegTrans>().eq("trans_id", transId).orderByAsc("trans_seq"));
+		List<ArticleSegTrans> trans = articleSegTransService.list(new QueryWrapper<ArticleSegTrans>().eq("trans_id",
+				transId).orderByAsc("trans_seq"));
 		String content = trans.stream().map(ArticleSegTrans::getContent).collect(Collectors.joining(""));
 		int length = Math.min(content.length(), 300);
 		return content.substring(0, length);
 	}
 
 	private void saveTranslation(int transId, UploadTransParam param) {
-		int textSegCount = articleTextSegService.count(new QueryWrapper<ArticleTextSeg>().eq("article_id", param.getArticleId()));
+		int textSegCount = articleTextSegService.count(new QueryWrapper<ArticleTextSeg>().eq("article_id",
+				param.getArticleId()));
 		int refCount = 0;
 		for (int i = 0; i < param.getSegmentList().size(); i++) {
 			UploadTransParam.TransSegment transSegment = param.getSegmentList().get(i);

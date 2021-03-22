@@ -7,8 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class ArticleCommentPageVo {
-	List<ArticleCommentVo> comments;
-	int pageCount;
-	int commentCount;
+public class ArticleTranslationVo {
+	private SimpleTranslationVo bestTranslation;
+	private List<SimpleTranslationVo> translations;
 }

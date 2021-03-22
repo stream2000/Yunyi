@@ -19,6 +19,7 @@ import net.yunyi.back.persistence.service.article.IRequestTransService;
 import net.yunyi.back.persistence.service.trans.IArticleTextSegService;
 import net.yunyi.back.persistence.service.trans.IArticleTransService;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
+import net.yunyi.back.persistence.vo.ArticleTranslationVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -220,5 +221,22 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 			articleTextSeg.setSequenceNumber(i);
 			articleTextSegService.save(articleTextSeg);
 		}
+	}
+
+	@Override
+	@Transactional
+	public ArticleTranslationVo getArticleTrans(final int articleId) {
+		ArticleListItemVo articleListItemVo = new ArticleListItemVo();
+		Article article = getById(articleId);
+		if (article == null) {
+			throw new BizException(YunyiCommonEnum.TRANS_ARTICLE_NOT_EXISTS);
+		}
+		if (article.getHasTrans() == null || !article.getHasTrans()) {
+			return null;
+		}
+		articleListItemVo.setId(articleId);
+		transService.fillTranslations(articleListItemVo);
+		transService.fillBestTranslationForArticle(articleListItemVo);
+		return new ArticleTranslationVo(articleListItemVo.getBestTranslation(), articleListItemVo.getTranslations());
 	}
 }
