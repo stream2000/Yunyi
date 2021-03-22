@@ -117,14 +117,14 @@ public class ArticleController {
 
 		// sort by certain method
 		switch (sort.toUpperCase()) {
-		case SORT_BY_HOT:
-			query.orderByDesc("stats.trans_request_num * 2 + stats.view_num + stats.comment_num * 3 + stats.like_num " + "*" + " 2");
+		case SORT_BY_DEFAULT:
+			query.orderByDesc("UNIX_TIMESTAMP(a.create_time)");
 			break;
 		case SORT_BY_CREATED:
 			query.orderByAsc("UNIX_TIMESTAMP(a.create_time)");
 			break;
 		default:
-			query.orderByDesc("UNIX_TIMESTAMP(a.create_time)");
+			query.orderByDesc("stats.trans_request_num * 2 + stats.view_num + stats.comment_num * 3 + stats.like_num " + "*" + " 2");
 			break;
 		}
 
