@@ -6,9 +6,9 @@
         select a.id as id,
                u.name,
                a.uploader_id,
-            left (a.title, 100) as title,
-            a.trans_title,
-            left (a.original_text, 100) as original_text,
+               a.title,
+               a.trans_title,
+            left (a.original_text, 400) as original_text,
             a.genre,
             a.has_trans,
             UNIX_TIMESTAMP(a.create_time) as create_time,
@@ -26,25 +26,25 @@
     </select>
 
     <select id="getArticleByQuery" resultType="net.yunyi.back.persistence.vo.ArticleListItemVo">
-        select a.id as id,
+        select a.id                          as id,
                u.name,
                a.uploader_id,
-            left (a.title, 100) as title,
-            a.trans_title,
-            left (a.original_text, 100) as original_text,
-            a.genre,
-            a.has_trans,
-            UNIX_TIMESTAMP(a.create_time) as create_time,
-            UNIX_TIMESTAMP(a.update_time) as update_time,
-            stats.like_num,
-            stats.view_num,
-            stats.comment_num,
-            stats.trans_request_num
+               a.title,
+               a.trans_title,
+               a.original_text,
+               a.genre,
+               a.has_trans,
+               UNIX_TIMESTAMP(a.create_time) as create_time,
+               UNIX_TIMESTAMP(a.update_time) as update_time,
+               stats.like_num,
+               stats.view_num,
+               stats.comment_num,
+               stats.trans_request_num
         from user u
-            join article a
-        on u.id = a.uploader_id
-            join article_stats stats
-            on a.id = stats.article_id
+                 join article a
+                      on u.id = a.uploader_id
+                 join article_stats stats
+                      on a.id = stats.article_id
             ${ew.customSqlSegment}
     </select>
 

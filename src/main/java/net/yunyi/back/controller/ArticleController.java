@@ -4,6 +4,8 @@ package net.yunyi.back.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import net.yunyi.back.common.BizException;
 import net.yunyi.back.common.LoginEnable;
@@ -55,7 +57,7 @@ import java.util.stream.Collectors;
 public class ArticleController {
 
 	private static final String SORT_BY_HOT = "HOT";
-	private static final String SORT_BY_NEWEST = "NEWEST";
+	private static final String SORT_BY_CREATED = "CREATED";
 	private static final String SORT_BY_DEFAULT = "DEFAULT";
 
 	@Autowired
@@ -71,16 +73,23 @@ public class ArticleController {
 	@ResponseBody
 	@LoginEnable
 	@ApiOperation(value = "获取单个文章的具体内容, 在文章界面使用")
-	public ApiResult<ArticleListItemVo> getArticleById(@Nullable @RequestAttribute("user") User user, @PathVariable int id) {
-		ArticleListItemVo article = articleService.getArticleByQuery(new QueryWrapper<ArticleListItemVo>().eq("a.id", id));
+	public ApiResult<ArticleListItemVo> getArticleById(@Nullable @RequestAttribute("user") User user,
+			@PathVariable int id) {
+		ArticleListItemVo article = articleService.getArticleByQuery(new QueryWrapper<ArticleListItemVo>().eq("a.id",
+				id));
 		return ApiResult.ok(article);
 	}
 
 	@GetMapping("/all")
 	@ResponseBody
-	@LoginEnable
-	@ApiOperation(value = "获取首页文章数据, 支持按热度排序（sort=hot)，按类别分类，带分页")
-	public ApiResult<NewsPageVo> getArticles(@Nullable @RequestAttribute User user, @RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @Nullable @RequestParam final String genre, @RequestParam @Nullable String sort) {
+	@ApiOperation(value = "获取首页文章数据, 带分页")
+	@ApiImplicitParams({@ApiImplicitParam(name = "genre", value = "类别参数，直接传递中文"), @ApiImplicitParam(name = "sort",
+			value = "hot: 热度， newest: 最新, default: 发帖顺序"), @ApiImplicitParam(name = "hasTrans", value =
+			"为空时不做过滤，有值时按值过滤")})
+
+	public ApiResult<NewsPageVo> getArticles(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize,
+			@Nullable @RequestParam final String genre, @RequestParam @Nullable String sort,
+			@RequestParam @Nullable Boolean hasTrans) {
 		IPage<ArticleListItemVo> articles;
 		int articleCount;
 		// construct the query
@@ -97,17 +106,21 @@ public class ArticleController {
 			sort = SORT_BY_DEFAULT;
 		}
 
+		if (hasTrans != null) {
+			query.eq("a.has_trans", hasTrans);
+			countQuery.eq("genre", genre);
+		}
+
 		// sort by certain method
-		// TODO: more sort method
 		switch (sort.toUpperCase()) {
 		case SORT_BY_HOT:
-			query.orderByDesc("stats.trans_request_num * 2 + stats.view_num + stats.comment_num * 3 + stats.like_num * 2");
+			query.orderByDesc("stats.trans_request_num * 2 + stats.view_num + stats.comment_num * 3 + stats.like_num " + "*" + " 2");
 			break;
-		case SORT_BY_NEWEST:
-			query.orderByDesc("UNIX_TIMESTAMP(a.create_time)");
+		case SORT_BY_CREATED:
+			query.orderByAsc("UNIX_TIMESTAMP(a.create_time)");
 			break;
 		default:
-			query.orderByAsc("UNIX_TIMESTAMP(a.create_time)");
+			query.orderByDesc("UNIX_TIMESTAMP(a.create_time)");
 			break;
 		}
 
@@ -144,11 +157,13 @@ public class ArticleController {
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "上传文章")
-	public ApiResult<Article> uploadArticle(@RequestBody UploadArticleParam param, @RequestAttribute("user") User user) {
+	public ApiResult<Article> uploadArticle(@RequestBody UploadArticleParam param,
+			@RequestAttribute("user") User user) {
 		if (param.getSegments() == null || param.getSegments().isEmpty()) {
 			throw new BizException(YunyiCommonEnum.ARTICLE_SEG_EMPTY);
 		}
-		Article article = articleService.addArticle(user.getId().intValue(), param.getTitle(), param.getGenre(), param.getSegments());
+		Article article = articleService.addArticle(user.getId().intValue(), param.getTitle(), param.getGenre(),
+				param.getSegments());
 		return ApiResult.ok(article);
 	}
 
@@ -156,12 +171,14 @@ public class ArticleController {
 	@ResponseBody
 	@ApiOperation(value = "修改文章")
 	@LoginRequired
-	public ApiResult<Article> modifyArticle(@RequestBody UploadArticleParam param, @RequestAttribute("user") User user) {
+	public ApiResult<Article> modifyArticle(@RequestBody UploadArticleParam param,
+			@RequestAttribute("user") User user) {
 		// TODO: add more validation here. For example, only member can modify the article
 		if (param.getSegments() == null || param.getSegments().isEmpty()) {
 			throw new BizException(YunyiCommonEnum.ARTICLE_SEG_EMPTY);
 		}
-		Article article = articleService.modifyArticle(param.getArticleId(), param.getTitle(), param.getTransTitle(), param.getGenre(), param.getSegments());
+		Article article = articleService.modifyArticle(param.getArticleId(), param.getTitle(), param.getTransTitle(),
+				param.getGenre(), param.getSegments());
 		if (article == null) {
 			return ApiResult.error(YunyiCommonEnum.ARTICLE_NOT_FOUND);
 		}
@@ -201,8 +218,10 @@ public class ArticleController {
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "添加原文页面评论")
-	public ApiResult<ArticleCommentVo> addArticleComment(@RequestAttribute(value = "user") User user, @RequestBody AddArticleCommentParam param) {
-		return ApiResult.ok(articleCommentService.addArticleComment(user.getId().intValue(), param.getArticleId(), param.getContent(), param.isHasRefComment(), param.getRefCommentId()));
+	public ApiResult<ArticleCommentVo> addArticleComment(@RequestAttribute(value = "user") User user,
+			@RequestBody AddArticleCommentParam param) {
+		return ApiResult.ok(articleCommentService.addArticleComment(user.getId().intValue(), param.getArticleId(),
+				param.getContent(), param.isHasRefComment(), param.getRefCommentId()));
 	}
 
 	@PostMapping("/comment/{id}/delete")
@@ -216,8 +235,10 @@ public class ArticleController {
 	@GetMapping("/{id}/comments")
 	@ResponseBody
 	@ApiOperation(value = "获取翻译界面的评论")
-	public ApiResult<ArticleCommentPageVo> getArticleComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
-		List<ArticleCommentVo> articleCommentVos = articleCommentService.getArticleComments(new Page<>(pageId, pageSize), id).getRecords().stream().sorted().collect(Collectors.toList());
+	public ApiResult<ArticleCommentPageVo> getArticleComment(@RequestParam @Min(1) int pageId,
+			@RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
+		List<ArticleCommentVo> articleCommentVos = articleCommentService.getArticleComments(new Page<>(pageId,
+				pageSize), id).getRecords().stream().sorted().collect(Collectors.toList());
 		int commentCount = articleCommentService.count(new QueryWrapper<ArticleComment>().eq("article_id", id));
 
 		// compute the page count

@@ -11,7 +11,7 @@
  Target Server Version : 80016
  File Encoding         : 65001
 
- Date: 13/03/2021 15:54:36
+ Date: 14/03/2021 23:52:41
 */
 
 SET NAMES utf8mb4;
@@ -43,11 +43,11 @@ CREATE TABLE `article`
 -- ----------------------------
 BEGIN;
 INSERT INTO `article`
-VALUES (1, 1, '政治翻译', NULL, '世界是美好的，我们要拯救世界', '历史', 1, '2021-03-12 02:53:13', '2021-03-12 05:29:31');
+VALUES (1, 1, '文章2', NULL, '世界太丑陋🌶，我们毁灭世界！！还是笑嘻了', '历史', 1, '2021-03-14 10:21:45', '2021-03-14 10:35:52');
 INSERT INTO `article`
-VALUES (2, 1, '文章2', NULL, '世界是美好的，我们要拯救世界', '历史', NULL, '2021-03-12 02:53:55', '2021-03-12 02:53:55');
+VALUES (2, 1, '文章3', NULL, '这波啊,这波是肉蛋葱鸡', '政治', NULL, '2021-03-14 10:30:21', '2021-03-14 10:30:21');
 INSERT INTO `article`
-VALUES (3, 1, '文章3', NULL, '世界是美好的，我们要拯救世界', '历史', NULL, '2021-03-12 05:26:13', '2021-03-12 05:26:13');
+VALUES (3, 1, '文章4', NULL, '这波我必不可能死', '政治', NULL, '2021-03-14 10:30:49', '2021-03-14 10:30:49');
 COMMIT;
 
 -- ----------------------------
@@ -66,7 +66,7 @@ CREATE TABLE `article_comment`
     `create_time`     datetime   DEFAULT NULL COMMENT '发送时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 4
+  AUTO_INCREMENT = 3
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT ='原文评论表';
 
@@ -75,11 +75,9 @@ CREATE TABLE `article_comment`
 -- ----------------------------
 BEGIN;
 INSERT INTO `article_comment`
-VALUES (1, 0, 1, 2, 0, 1, '我觉得其实ok', '2021-03-12 02:55:42');
+VALUES (1, 1, 1, 1, 0, 1, '一般吧', '2021-03-14 10:22:12');
 INSERT INTO `article_comment`
-VALUES (2, 1, 1, 2, 1, 1, '我觉得不行', '2021-03-12 02:55:53');
-INSERT INTO `article_comment`
-VALUES (3, 2, 1, 2, 1, 1, '我觉得还好', '2021-03-12 02:56:11');
+VALUES (2, 2, 1, 1, 1, 1, '我觉得还行', '2021-03-14 10:22:25');
 COMMIT;
 
 -- ----------------------------
@@ -101,6 +99,8 @@ CREATE TABLE `article_like`
 BEGIN;
 INSERT INTO `article_like`
 VALUES (1, 1);
+INSERT INTO `article_like`
+VALUES (2, 1);
 COMMIT;
 
 -- ----------------------------
@@ -110,12 +110,13 @@ DROP TABLE IF EXISTS `article_seg_trans`;
 CREATE TABLE `article_seg_trans`
 (
     `id`        bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一id',
-    `trans_id`  int(11) DEFAULT NULL COMMENT '对应原文切分的id',
-    `trans_seq` int(11) DEFAULT NULL COMMENT '翻译序号',
+    `trans_id`  int(11)                          DEFAULT NULL COMMENT '翻译id',
+    `trans_seq` int(11)                          DEFAULT NULL COMMENT '翻译的顺序',
+    `ref_ids`   varchar(100) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '引用id',
     `content`   text COLLATE utf8mb4_bin COMMENT '翻译内容',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 5
+  AUTO_INCREMENT = 3
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT ='原文切分的翻译表';
 
@@ -124,13 +125,9 @@ CREATE TABLE `article_seg_trans`
 -- ----------------------------
 BEGIN;
 INSERT INTO `article_seg_trans`
-VALUES (1, 1, 0, '翻译');
+VALUES (1, 1, 0, '1,2', 'trans 1 test 2');
 INSERT INTO `article_seg_trans`
-VALUES (2, 1, 1, '翻译2');
-INSERT INTO `article_seg_trans`
-VALUES (3, 2, 0, '翻译');
-INSERT INTO `article_seg_trans`
-VALUES (4, 2, 1, '翻译2');
+VALUES (2, 1, 1, '3', 'trans 2');
 COMMIT;
 
 -- ----------------------------
@@ -154,9 +151,9 @@ CREATE TABLE `article_stats`
 -- ----------------------------
 BEGIN;
 INSERT INTO `article_stats`
-VALUES (1, 0, 1, 0, 0);
+VALUES (1, 0, 1, 2, 0);
 INSERT INTO `article_stats`
-VALUES (2, 0, 0, 3, 0);
+VALUES (2, 0, 1, 0, 0);
 INSERT INTO `article_stats`
 VALUES (3, 0, 0, 0, 0);
 COMMIT;
@@ -174,7 +171,7 @@ CREATE TABLE `article_text_seg`
     PRIMARY KEY (`id`),
     UNIQUE KEY `article_id` (`article_id`, `sequence_number`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 7
+  AUTO_INCREMENT = 8
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT ='原文切分表';
 
@@ -183,17 +180,19 @@ CREATE TABLE `article_text_seg`
 -- ----------------------------
 BEGIN;
 INSERT INTO `article_text_seg`
-VALUES (1, 1, 0, '世界是美好的，');
+VALUES (1, 1, 0, '世界太丑陋🌶，');
 INSERT INTO `article_text_seg`
-VALUES (2, 1, 1, '我们要拯救世界');
+VALUES (2, 1, 1, '我们毁灭世界！！');
 INSERT INTO `article_text_seg`
-VALUES (3, 2, 0, '世界是美好的，');
+VALUES (3, 1, 2, '还是笑嘻了');
 INSERT INTO `article_text_seg`
-VALUES (4, 2, 1, '我们要拯救世界');
+VALUES (4, 2, 0, '这波啊,');
 INSERT INTO `article_text_seg`
-VALUES (5, 3, 0, '世界是美好的，');
+VALUES (5, 2, 1, '这波是肉蛋葱鸡');
 INSERT INTO `article_text_seg`
-VALUES (6, 3, 1, '我们要拯救世界');
+VALUES (6, 3, 0, '这波');
+INSERT INTO `article_text_seg`
+VALUES (7, 3, 1, '我必不可能死');
 COMMIT;
 
 -- ----------------------------
@@ -203,11 +202,12 @@ DROP TABLE IF EXISTS `article_trans`;
 CREATE TABLE `article_trans`
 (
     `id`          bigint(20) NOT NULL AUTO_INCREMENT COMMENT '唯一id',
-    `article_id`  int(11) DEFAULT NULL COMMENT '翻译对应原文id',
-    `uploader_id` int(11) DEFAULT NULL COMMENT '上传者id',
+    `article_id`  int(11)                          DEFAULT NULL COMMENT '翻译对应原文id',
+    `uploader_id` int(11)                          DEFAULT NULL COMMENT '上传者id',
+    `trans_title` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '翻译标题',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 3
+  AUTO_INCREMENT = 2
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT ='原文切分的翻译表';
 
@@ -216,9 +216,7 @@ CREATE TABLE `article_trans`
 -- ----------------------------
 BEGIN;
 INSERT INTO `article_trans`
-VALUES (1, 1, 1);
-INSERT INTO `article_trans`
-VALUES (2, 1, 1);
+VALUES (1, 1, 1, 'not blank');
 COMMIT;
 
 -- ----------------------------
@@ -251,8 +249,21 @@ CREATE TABLE `trans_comment`
     `create_time`     datetime   DEFAULT NULL COMMENT '发送时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT ='翻译评论表';
+
+-- ----------------------------
+-- Records of trans_comment
+-- ----------------------------
+BEGIN;
+INSERT INTO `trans_comment`
+VALUES (1, 1, 1, 1, 0, 2, '翻译评论', NULL);
+INSERT INTO `trans_comment`
+VALUES (2, 2, 1, 1, 0, 2, '引用翻译评论', NULL);
+INSERT INTO `trans_comment`
+VALUES (3, 3, 1, 1, 1, 2, '真·引用翻译评论', NULL);
+COMMIT;
 
 -- ----------------------------
 -- Table structure for trans_item_comment
@@ -268,8 +279,21 @@ CREATE TABLE `trans_item_comment`
     `create_time`  datetime DEFAULT NULL COMMENT '发送时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
+  AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT ='单句评论表';
+
+-- ----------------------------
+-- Records of trans_item_comment
+-- ----------------------------
+BEGIN;
+INSERT INTO `trans_item_comment`
+VALUES (1, 1, 1, 1, '好翻译我只能说', NULL);
+INSERT INTO `trans_item_comment`
+VALUES (2, 1, 1, 2, '确实是好翻译', NULL);
+INSERT INTO `trans_item_comment`
+VALUES (3, 2, 1, 1, '再顶一下', NULL);
+COMMIT;
 
 -- ----------------------------
 -- Table structure for trans_like
@@ -283,6 +307,59 @@ CREATE TABLE `trans_like`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin COMMENT ='翻译点赞表';
+
+-- ----------------------------
+-- Records of trans_like
+-- ----------------------------
+BEGIN;
+INSERT INTO `trans_like`
+VALUES (1, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for trans_seg_like
+-- ----------------------------
+DROP TABLE IF EXISTS `trans_seg_like`;
+CREATE TABLE `trans_seg_like`
+(
+    `trans_seg_id` int(11) NOT NULL,
+    `user_id`      int(11) NOT NULL,
+    PRIMARY KEY (`trans_seg_id`, `user_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_bin COMMENT ='翻译点赞表';
+
+-- ----------------------------
+-- Records of trans_seg_like
+-- ----------------------------
+BEGIN;
+INSERT INTO `trans_seg_like`
+VALUES (1, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for trans_seg_stats
+-- ----------------------------
+DROP TABLE IF EXISTS `trans_seg_stats`;
+CREATE TABLE `trans_seg_stats`
+(
+    `trans_seg_id` int(11) NOT NULL,
+    `like_num`     int(11) DEFAULT NULL,
+    `comment_num`  int(11) DEFAULT NULL,
+    PRIMARY KEY (`trans_seg_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_bin COMMENT ='翻译统计表';
+
+-- ----------------------------
+-- Records of trans_seg_stats
+-- ----------------------------
+BEGIN;
+INSERT INTO `trans_seg_stats`
+VALUES (1, 1, 2);
+INSERT INTO `trans_seg_stats`
+VALUES (2, 0, 1);
+COMMIT;
 
 -- ----------------------------
 -- Table structure for trans_stats
@@ -303,9 +380,7 @@ CREATE TABLE `trans_stats`
 -- ----------------------------
 BEGIN;
 INSERT INTO `trans_stats`
-VALUES (1, 0, 0);
-INSERT INTO `trans_stats`
-VALUES (2, 0, 0);
+VALUES (1, 1, 3);
 COMMIT;
 
 -- ----------------------------
@@ -331,7 +406,7 @@ CREATE TABLE `user`
 -- ----------------------------
 BEGIN;
 INSERT INTO `user`
-VALUES (1, 'hello', 0, '18889897088@163.com', '17721260791');
+VALUES (1, 'user-0152d57e-ebf5-41a1-a09c-df7bcf8c827b', 0, NULL, '17721260791');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

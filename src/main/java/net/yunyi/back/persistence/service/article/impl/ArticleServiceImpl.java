@@ -98,6 +98,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 		}
 		if (segments != null && !segments.isEmpty()) {
 			article.setOriginalText(String.join("", segments));
+			// TODO delete all relative records, but now is enough
 			articleTextSegService.remove(new QueryWrapper<ArticleTextSeg>().eq("article_id", articleId));
 			saveSegments(articleId, segments);
 		}
