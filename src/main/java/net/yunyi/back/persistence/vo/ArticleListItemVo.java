@@ -27,4 +27,6 @@ public class ArticleListItemVo {
 	private int transRequestNum;
 	private SimpleTranslationVo bestTranslation;
 	private List<SimpleTranslationVo> translations;
+	private boolean isLike;
+	private boolean isRequestVote;
 }

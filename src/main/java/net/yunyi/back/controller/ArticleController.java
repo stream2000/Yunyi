@@ -75,8 +75,9 @@ public class ArticleController {
 	@ApiOperation(value = "获取单个文章的具体内容, 在文章界面使用")
 	public ApiResult<ArticleListItemVo> getArticleById(@Nullable @RequestAttribute("user") User user,
 			@PathVariable int id) {
+		int userId = user == null ? 0 : user.getId().intValue();
 		ArticleListItemVo article = articleService.getArticleByQuery(new QueryWrapper<ArticleListItemVo>().eq("a.id",
-				id));
+				id), userId);
 		return ApiResult.ok(article);
 	}
 
@@ -84,9 +85,11 @@ public class ArticleController {
 	@ResponseBody
 	@ApiOperation(value = "获取首页文章数据, 带分页")
 	@ApiImplicitParams({@ApiImplicitParam(name = "genre", value = "类别参数，直接传递中文"), @ApiImplicitParam(name = "sort",
-			value = "hot: 热度， newest: 最新, default: 发帖顺序"), @ApiImplicitParam(name = "hasTrans", value =
-			"为空时不做过滤，有值时按值过滤")})
+			value = "hot: 热度， newest: 最新, default: 发帖顺序"),
 
+			@ApiImplicitParam(name = "hasTrans", value = "为空时不做过滤，有值时按值过滤"),
+
+			@ApiImplicitParam(name = "token", value = "通过在参数中携带token，可以以登录状态获取该api，以得知是否已经点赞该文章")})
 	public ApiResult<NewsPageVo> getArticles(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize,
 			@Nullable @RequestParam final String genre, @RequestParam @Nullable String sort,
 			@RequestParam @Nullable Boolean hasTrans) {
@@ -169,7 +172,7 @@ public class ArticleController {
 
 	@PostMapping("/modify")
 	@ResponseBody
-	@ApiOperation(value = "修改文章")
+	@ApiOperation(value = "修改文章, 目前的实现在已有翻译的情况比较triky，推荐在有翻译后禁止该api")
 	@LoginRequired
 	public ApiResult<Article> modifyArticle(@RequestBody UploadArticleParam param,
 			@RequestAttribute("user") User user) {
@@ -204,7 +207,7 @@ public class ArticleController {
 
 	@GetMapping("/{id}/segs")
 	@ResponseBody
-	@ApiOperation(value = "删除文章")
+	@ApiOperation(value = "获取文章分段")
 	public ApiResult<List<ArticleTextSeg>> getArticleTextSegs(@PathVariable int id) {
 
 		QueryWrapper<ArticleTextSeg> query = new QueryWrapper<ArticleTextSeg>().eq("article_id", id);

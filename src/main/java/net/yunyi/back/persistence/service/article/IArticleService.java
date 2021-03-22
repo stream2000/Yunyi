@@ -29,7 +29,7 @@ public interface IArticleService extends IService<Article> {
 
 	IPage<ArticleListItemVo> getArticlesByQuery(Page<ArticleListItemVo> page, QueryWrapper<ArticleListItemVo> query);
 
-	ArticleListItemVo getArticleByQuery(QueryWrapper<ArticleListItemVo> queryWrapper);
+	ArticleListItemVo getArticleByQuery(QueryWrapper<ArticleListItemVo> queryWrapper, final int userId);
 
 	boolean likeArticle(int articleId, final int userId);
 

@@ -59,7 +59,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	// TODO: store texts after splitting the article
 	@Override
 	@Transactional
-	public Article addArticle(final int uploaderId, final String title, final String genre, final List<String> segments) {
+	public Article addArticle(final int uploaderId, final String title, final String genre,
+			final List<String> segments) {
 		Article article = new Article();
 		article.setGenre(genre);
 		article.setUploaderId(uploaderId);
@@ -82,7 +83,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
 	@Override
 	@Transactional
-	public Article modifyArticle(final int articleId, final String title, final String transTitle, final String genre, final List<String> segments) {
+	public Article modifyArticle(final int articleId, final String title, final String transTitle, final String genre,
+			final List<String> segments) {
 		Article article = getById(articleId);
 		if (article == null) {
 			return null;
@@ -111,7 +113,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	public boolean deleteArticle(final int articleId) {
 		Article article = getById(articleId);
 		if (article == null) {
-			throw new BizException(YunyiCommonEnum.ARTICLE_NOT_FOUND.getResultCode(), "the article to delete not found");
+			throw new BizException(YunyiCommonEnum.ARTICLE_NOT_FOUND.getResultCode(), "the article to delete not " +
+					"found");
 		}
 		// delete the article
 		removeById(articleId);
@@ -126,7 +129,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	@Override
 	@Transactional
 	public boolean requestTrans(final int articleId, final int userId) {
-		QueryWrapper<RequestTrans> query = new QueryWrapper<RequestTrans>().eq("user_id", userId).eq("article_id", articleId);
+		QueryWrapper<RequestTrans> query = new QueryWrapper<RequestTrans>().eq("user_id", userId).eq("article_id",
+				articleId);
 		if (requestTransService.getOne(query) != null) {
 			return true;
 		}
@@ -144,7 +148,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
 	@Override
 	@Transactional
-	public IPage<ArticleListItemVo> getArticlesByQuery(final Page<ArticleListItemVo> page, final QueryWrapper<ArticleListItemVo> query) {
+	public IPage<ArticleListItemVo> getArticlesByQuery(final Page<ArticleListItemVo> page,
+			final QueryWrapper<ArticleListItemVo> query) {
 		IPage<ArticleListItemVo> result = baseMapper.getAllArticles(page, query);
 		result.getRecords().forEach(r -> {
 			if (r != null && r.isHasTrans()) {
@@ -156,11 +161,15 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
 	@Override
 	@Transactional
-	public ArticleListItemVo getArticleByQuery(final QueryWrapper<ArticleListItemVo> queryWrapper) {
+	public ArticleListItemVo getArticleByQuery(final QueryWrapper<ArticleListItemVo> queryWrapper, final int userId) {
 		ArticleListItemVo vo = baseMapper.getArticleByQuery(queryWrapper);
 		if (vo != null && vo.isHasTrans()) {
 			transService.fillBestTranslationForArticle(vo);
 			transService.fillTranslations(vo);
+		}
+		if (userId > 0) {
+			vo.setLike(articleLikeService.getById(userId) != null);
+			vo.setRequestVote(requestTransService.getById(userId) != null);
 		}
 		return vo;
 	}
