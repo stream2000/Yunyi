@@ -86,7 +86,7 @@ public class ArticleController {
 	@ResponseBody
 	@ApiOperation(value = "获取首页文章数据, 带分页")
 	@ApiImplicitParams({@ApiImplicitParam(name = "genre", value = "类别参数，直接传递中文"), @ApiImplicitParam(name = "sort",
-			value = "hot: 热度， newest: 最新, default: 发帖顺序"),
+			value = "hot: 热度， default: 最新, created: 发帖顺序"),
 
 			@ApiImplicitParam(name = "hasTrans", value = "为空时不做过滤，有值时按值过滤"),
 
@@ -111,8 +111,13 @@ public class ArticleController {
 		}
 
 		if (hasTrans != null) {
-			query.eq("a.has_trans", hasTrans);
-			countQuery.eq("genre", genre);
+			if (hasTrans) {
+				query.eq("a.has_trans", true);
+				countQuery.eq("has_trans", true);
+			} else {
+				query.eq("a.has_trans", false).or().isNull("a.has_trans");
+				countQuery.eq("has_trans", false).or().isNull("has_trans");
+			}
 		}
 
 		// sort by certain method
