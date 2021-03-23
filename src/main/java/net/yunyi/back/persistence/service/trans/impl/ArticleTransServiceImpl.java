@@ -188,6 +188,7 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 
 		bestTranslation.setContent(getSimpleTransContent(bestTranslation.getTransId()));
 		vo.setBestTranslation(bestTranslation);
+		vo.setTransTitle(bestTranslation.getTransTitle());
 	}
 
 	@Override
