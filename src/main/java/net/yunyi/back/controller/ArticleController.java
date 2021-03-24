@@ -138,8 +138,8 @@ public class ArticleController {
 
 		// compute the page count
 		int pageCount = articleCount / pageSize;
-		if (pageCount == 0) {
-			pageCount = 1;
+		if (articleCount % pageSize > 0) {
+			pageCount++;
 		}
 
 		return ApiResult.ok(new NewsPageVo(pageCount, articles.getRecords()));
@@ -258,9 +258,10 @@ public class ArticleController {
 
 		// compute the page count
 		int pageCount = commentCount / pageSize;
-		if (pageCount == 0) {
-			pageCount = 1;
+		if (commentCount % pageSize > 0) {
+			pageCount++;
 		}
+
 		return ApiResult.ok(new ArticleCommentPageVo(articleCommentVos, pageCount, commentCount));
 	}
 
