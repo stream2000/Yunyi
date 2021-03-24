@@ -59,7 +59,6 @@ public class ArticleController {
 
 	private static final String SORT_BY_HOT = "HOT";
 	private static final String SORT_BY_CREATED = "CREATED";
-	private static final String SORT_BY_DEFAULT = "DEFAULT";
 
 	@Autowired
 	IArticleService articleService;
@@ -86,7 +85,7 @@ public class ArticleController {
 	@ResponseBody
 	@ApiOperation(value = "获取首页文章数据, 带分页")
 	@ApiImplicitParams({@ApiImplicitParam(name = "genre", value = "类别参数，直接传递中文"), @ApiImplicitParam(name = "sort",
-			value = "hot: 热度， default: 最新, created: 发帖顺序"),
+			value = "hot: 热度 created: 发帖顺序"),
 
 			@ApiImplicitParam(name = "hasTrans", value = "为空时不做过滤，有值时按值过滤"),
 
@@ -122,11 +121,8 @@ public class ArticleController {
 
 		// sort by certain method
 		switch (sort.toUpperCase()) {
-		case SORT_BY_DEFAULT:
-			query.orderByDesc("UNIX_TIMESTAMP(a.create_time)");
-			break;
 		case SORT_BY_CREATED:
-			query.orderByAsc("UNIX_TIMESTAMP(a.create_time)");
+			query.orderByDesc("UNIX_TIMESTAMP(a.create_time)");
 			break;
 		default:
 			query.orderByDesc("stats.trans_request_num * 2 + stats.view_num + stats.comment_num * 3 + stats.like_num " + "*" + " 2");
