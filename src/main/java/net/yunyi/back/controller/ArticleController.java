@@ -147,7 +147,7 @@ public class ArticleController {
 
 	@PostMapping("/{articleId}/view")
 	@ResponseBody
-	@ApiOperation(value = "点赞文章")
+	@ApiOperation(value = "增加文章访问量")
 	public ApiResult<Boolean> viewArticle(@PathVariable int articleId) {
 		return ApiResult.ok(articleService.viewArticle(articleId));
 	}
