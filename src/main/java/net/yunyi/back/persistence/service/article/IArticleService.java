@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import net.yunyi.back.persistence.entity.Article;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import net.yunyi.back.persistence.vo.ArticleTranslationVo;
+import net.yunyi.back.persistence.vo.UserUploadedArticleVo;
 
 import java.util.List;
 
@@ -30,9 +31,13 @@ public interface IArticleService extends IService<Article> {
 
 	IPage<ArticleListItemVo> getArticlesByQuery(Page<ArticleListItemVo> page, QueryWrapper<ArticleListItemVo> query);
 
+	List<UserUploadedArticleVo> getArticlesByUserId(int userId);
+
 	ArticleListItemVo getArticleByQuery(QueryWrapper<ArticleListItemVo> queryWrapper, final int userId);
 
 	boolean likeArticle(int articleId, final int userId);
+
+	boolean viewArticle(int articleId);
 
 	boolean cancelLikeArticle(int articleId, final int userId);
 

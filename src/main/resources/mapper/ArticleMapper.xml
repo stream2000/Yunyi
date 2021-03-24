@@ -48,4 +48,21 @@
             ${ew.customSqlSegment}
     </select>
 
+    <select id="getArticlesByUserId" resultType="net.yunyi.back.persistence.vo.UserUploadedArticleVo">
+        select a.id as id,
+               u.name,
+               a.title,
+               a.genre,
+               a.has_trans,
+               stats.like_num,
+               stats.comment_num,
+               stats.trans_request_num
+        from user u
+                 join article a
+                      on u.id = a.uploader_id
+                 join article_stats stats
+                      on a.id = stats.article_id
+        where u.id = #{userId} limit 10
+    </select>
+
 </mapper>

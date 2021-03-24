@@ -26,6 +26,7 @@ import net.yunyi.back.persistence.vo.ArticleCommentVo;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import net.yunyi.back.persistence.vo.ArticleTranslationVo;
 import net.yunyi.back.persistence.vo.NewsPageVo;
+import net.yunyi.back.persistence.vo.UserUploadedArticleVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -81,6 +82,13 @@ public class ArticleController {
 		return ApiResult.ok(article);
 	}
 
+	@GetMapping("/uploader/{id}")
+	@ResponseBody
+	@ApiOperation(value = "获取作者上传的所有文章")
+	public ApiResult<List<UserUploadedArticleVo>> getArticleByUploaderId(@PathVariable int id) {
+		return ApiResult.ok(articleService.getArticlesByUserId(id));
+	}
+
 	@GetMapping("/all")
 	@ResponseBody
 	@ApiOperation(value = "获取首页文章数据, 带分页")
@@ -110,13 +118,8 @@ public class ArticleController {
 		}
 
 		if (hasTrans != null) {
-			if (hasTrans) {
-				query.eq("a.has_trans", true);
-				countQuery.eq("has_trans", true);
-			} else {
-				query.eq("a.has_trans", false).or().isNull("a.has_trans");
-				countQuery.eq("has_trans", false).or().isNull("has_trans");
-			}
+			query.eq("a.has_trans", hasTrans);
+			countQuery.eq("has_trans", hasTrans);
 		}
 
 		// sort by certain method
@@ -140,6 +143,13 @@ public class ArticleController {
 		}
 
 		return ApiResult.ok(new NewsPageVo(pageCount, articles.getRecords()));
+	}
+
+	@PostMapping("/{articleId}/view")
+	@ResponseBody
+	@ApiOperation(value = "点赞文章")
+	public ApiResult<Boolean> viewArticle(@PathVariable int articleId) {
+		return ApiResult.ok(articleService.viewArticle(articleId));
 	}
 
 	@PostMapping("/{articleId}/like")

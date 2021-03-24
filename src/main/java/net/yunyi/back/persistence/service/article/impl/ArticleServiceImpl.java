@@ -20,6 +20,7 @@ import net.yunyi.back.persistence.service.trans.IArticleTextSegService;
 import net.yunyi.back.persistence.service.trans.IArticleTransService;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import net.yunyi.back.persistence.vo.ArticleTranslationVo;
+import net.yunyi.back.persistence.vo.UserUploadedArticleVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,6 +67,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 		article.setGenre(genre);
 		article.setUploaderId(uploaderId);
 		article.setTitle(title);
+		article.setHasTrans(false);
 		String text = String.join("", segments);
 		article.setOriginalText(text);
 		save(article);
@@ -161,6 +163,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	}
 
 	@Override
+	public List<UserUploadedArticleVo> getArticlesByUserId(final int userId) {
+		return baseMapper.getArticlesByUserId(userId);
+	}
+
+	@Override
 	@Transactional
 	public ArticleListItemVo getArticleByQuery(final QueryWrapper<ArticleListItemVo> queryWrapper, final int userId) {
 		ArticleListItemVo vo = baseMapper.getArticleByQuery(queryWrapper);
@@ -187,9 +194,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 		like.setUserId(userId);
 		articleLikeService.save(like);
 		ArticleStats stats = articleStatsService.getById(articleId);
-		// todo: concurrent issue
 		int currentLikeNum = stats.getLikeNum() != null ? stats.getLikeNum() : 0;
 		stats.setLikeNum(currentLikeNum + 1);
+		articleStatsService.updateById(stats);
+		return true;
+	}
+
+	@Override
+	public boolean viewArticle(final int articleId) {
+		ArticleStats stats = articleStatsService.getById(articleId);
+		int currentViewNum = stats.getViewNum() != null ? stats.getViewNum() : 0;
+		stats.setViewNum(currentViewNum + 1);
 		articleStatsService.updateById(stats);
 		return true;
 	}
