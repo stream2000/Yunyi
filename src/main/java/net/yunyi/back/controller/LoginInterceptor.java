@@ -39,11 +39,11 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		// 判断接口是否需要登录
 		boolean mustLogin = method.getAnnotation(LoginRequired.class) != null;
 		boolean enableLogin = method.getAnnotation(LoginEnable.class) != null;
+		String token = request.getParameter("token");
 
 		try {
 			if (mustLogin || enableLogin) {
 				// 这写你拦截需要干的事儿，比如取缓存，SESSION，权限判断等
-				String token = request.getParameter("token");
 				if (mustLogin && !StringUtils.hasText(token)) {
 					throw new BizException(YunyiCommonEnum.AUTH);
 				}
@@ -56,7 +56,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				return true;
 			}
 		} catch (Exception e) {
-			if (mustLogin) {
+			if (mustLogin || token != null) {
 				throw e;
 			}
 		}

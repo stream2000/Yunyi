@@ -168,9 +168,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 			transService.fillBestTranslationForArticle(vo);
 			transService.fillTranslations(vo);
 		}
-		if (userId > 0) {
-			vo.setLike(articleLikeService.getById(userId) != null);
-			vo.setRequestVote(requestTransService.getById(userId) != null);
+		if (userId > 0 && vo != null) {
+			vo.setLike(articleLikeService.getOne(queryLikeTableById(vo.getId(), userId)) != null);
+			vo.setRequestVote(requestTransService.getOne(new QueryWrapper<RequestTrans>().eq("article_id", vo.getId()).eq("user_id", userId)) != null);
 		}
 		return vo;
 	}
@@ -209,20 +209,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 		return true;
 	}
 
-	private void saveSegments(int articleId, List<String> segments) {
-		for (int i = 0; i < segments.size(); i++) {
-			String seg = segments.get(i);
-			if (StringUtils.isBlank(seg)) {
-				throw new BizException(YunyiCommonEnum.ARTICLE_SEG_EMPTY);
-			}
-			ArticleTextSeg articleTextSeg = new ArticleTextSeg();
-			articleTextSeg.setArticleId(articleId);
-			articleTextSeg.setContent(seg);
-			articleTextSeg.setSequenceNumber(i);
-			articleTextSegService.save(articleTextSeg);
-		}
-	}
-
 	@Override
 	@Transactional
 	public ArticleTranslationVo getArticleTrans(final int articleId) {
@@ -238,5 +224,19 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 		transService.fillTranslations(articleListItemVo);
 		transService.fillBestTranslationForArticle(articleListItemVo);
 		return new ArticleTranslationVo(articleListItemVo.getBestTranslation(), articleListItemVo.getTranslations());
+	}
+
+	private void saveSegments(int articleId, List<String> segments) {
+		for (int i = 0; i < segments.size(); i++) {
+			String seg = segments.get(i);
+			if (StringUtils.isBlank(seg)) {
+				throw new BizException(YunyiCommonEnum.ARTICLE_SEG_EMPTY);
+			}
+			ArticleTextSeg articleTextSeg = new ArticleTextSeg();
+			articleTextSeg.setArticleId(articleId);
+			articleTextSeg.setContent(seg);
+			articleTextSeg.setSequenceNumber(i);
+			articleTextSegService.save(articleTextSeg);
+		}
 	}
 }
