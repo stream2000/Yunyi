@@ -1,6 +1,8 @@
 package net.yunyi.back.persistence.service.trans.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import net.yunyi.back.common.BizException;
 import net.yunyi.back.common.response.YunyiCommonEnum;
@@ -26,7 +28,6 @@ import net.yunyi.back.persistence.service.trans.ITransLikeService;
 import net.yunyi.back.persistence.service.trans.ITransSegLikeService;
 import net.yunyi.back.persistence.service.trans.ITransSegStatsService;
 import net.yunyi.back.persistence.service.trans.ITransStatsService;
-import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
 import net.yunyi.back.persistence.vo.TranslationDetailVo;
 import org.apache.commons.lang3.StringUtils;
@@ -176,30 +177,17 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 
 	@Override
 	@Transactional
-	public void fillBestTranslationForArticle(final ArticleListItemVo vo) {
+	public SimpleTranslationVo getBestTranslationForArticle(int articleId) {
 		QueryWrapper<ArticleTrans> bestTranslationQuery = new QueryWrapper<>();
-		bestTranslationQuery.eq("article_id", vo.getId());
+		bestTranslationQuery.eq("article_id", articleId);
 		bestTranslationQuery.orderByDesc("stats.like_num * 3 + stats.comment_num * 4");
 
 		SimpleTranslationVo bestTranslation = baseMapper.getBestTranslation(bestTranslationQuery);
 		if (bestTranslation == null) {
-			return;
+			return null;
 		}
-
 		bestTranslation.setContent(getSimpleTransContent(bestTranslation.getTransId()));
-		vo.setBestTranslation(bestTranslation);
-		vo.setTransTitle(bestTranslation.getTransTitle());
-	}
-
-	@Override
-	public void fillTranslations(final ArticleListItemVo vo) {
-		QueryWrapper<ArticleTrans> query = new QueryWrapper<>();
-		query.eq("article_id", vo.getId());
-		query.orderByDesc("stats.like_num * 3 + stats.comment_num * 4");
-		vo.setTranslations(baseMapper.getSimpleTranslations(query));
-		for (final SimpleTranslationVo translation : vo.getTranslations()) {
-			translation.setContent(getSimpleTransContent(translation.getTransId()));
-		}
+		return bestTranslation;
 	}
 
 	@Override
@@ -316,6 +304,18 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		return true;
 	}
 
+	@Override
+	public IPage<SimpleTranslationVo> getTranslations(int articleId, final Page<SimpleTranslationVo> page) {
+		QueryWrapper<ArticleTrans> query = new QueryWrapper<>();
+		query.eq("article_id", articleId);
+		query.orderByDesc("stats.like_num * 3 + stats.comment_num * 4");
+		IPage<SimpleTranslationVo> transList = baseMapper.getSimpleTranslations(page, query);
+		transList.getSize();
+		for (final SimpleTranslationVo translation : transList.getRecords()) {
+			translation.setContent(getSimpleTransContent(translation.getTransId()));
+		}
+		return transList;
+	}
 
 	private String getSimpleTransContent(int transId) {
 		List<ArticleSegTrans> trans = articleSegTransService.list(new QueryWrapper<ArticleSegTrans>().eq("trans_id",

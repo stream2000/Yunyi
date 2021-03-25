@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,7 +24,6 @@ public class ArticleListItemVo {
 	private int commentNum;
 	private int transRequestNum;
 	private SimpleTranslationVo bestTranslation;
-	private List<SimpleTranslationVo> translations;
 	private boolean isLike;
 	private boolean isRequestVote;
 }

@@ -1,9 +1,10 @@
 package net.yunyi.back.persistence.service.trans;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import net.yunyi.back.persistence.entity.ArticleTrans;
 import net.yunyi.back.persistence.param.UploadTransParam;
-import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
 import net.yunyi.back.persistence.vo.TranslationDetailVo;
 
@@ -24,9 +25,9 @@ public interface IArticleTransService extends IService<ArticleTrans> {
 
 	SimpleTranslationVo getTranslation(int transId);
 
-	void fillBestTranslationForArticle(ArticleListItemVo vo);
+	SimpleTranslationVo getBestTranslationForArticle(int articleID);
 
-	void fillTranslations(ArticleListItemVo vo);
+	IPage<SimpleTranslationVo> getTranslations(int articleId, final Page<SimpleTranslationVo> page);
 
 	boolean likeTrans(int transId, final int userId);
 

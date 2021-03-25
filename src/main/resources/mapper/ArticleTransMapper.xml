@@ -12,7 +12,12 @@
     </delete>
 
     <select id="getBestTranslation" resultType="net.yunyi.back.persistence.vo.SimpleTranslationVo">
-        select t.id as trans_id, u.id as uploader_id, u.name as uploader_name, t.trans_title, stats.like_num
+        select t.id   as trans_id,
+               u.id   as uploader_id,
+               u.name as uploader_name,
+               t.trans_title,
+               stats.like_num,
+               stats.comment_num
         from article_trans t
                  join trans_stats stats
                       on t.id = stats.trans_id
@@ -23,7 +28,12 @@
     </select>
 
     <select id="getSimpleTranslations" resultType="net.yunyi.back.persistence.vo.SimpleTranslationVo">
-        select t.id as trans_id, u.id as uploader_id, t.trans_title, u.name as uploader_name, stats.like_num
+        select t.id   as trans_id,
+               u.id   as uploader_id,
+               t.trans_title,
+               u.name as uploader_name,
+               stats.like_num,
+               stats.comment_num
         from article_trans t
                  join trans_stats stats
                       on t.id = stats.trans_id

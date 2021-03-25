@@ -10,6 +10,7 @@ import net.yunyi.back.persistence.entity.Article;
 import net.yunyi.back.persistence.entity.ArticleLike;
 import net.yunyi.back.persistence.entity.ArticleStats;
 import net.yunyi.back.persistence.entity.ArticleTextSeg;
+import net.yunyi.back.persistence.entity.ArticleTrans;
 import net.yunyi.back.persistence.entity.RequestTrans;
 import net.yunyi.back.persistence.mapper.ArticleMapper;
 import net.yunyi.back.persistence.service.article.IArticleLikeService;
@@ -20,6 +21,7 @@ import net.yunyi.back.persistence.service.trans.IArticleTextSegService;
 import net.yunyi.back.persistence.service.trans.IArticleTransService;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import net.yunyi.back.persistence.vo.ArticleTranslationVo;
+import net.yunyi.back.persistence.vo.SimpleTranslationVo;
 import net.yunyi.back.persistence.vo.UserUploadedArticleVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,7 +158,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 		IPage<ArticleListItemVo> result = baseMapper.getAllArticles(page, query);
 		result.getRecords().forEach(r -> {
 			if (r != null && r.isHasTrans()) {
-				transService.fillBestTranslationForArticle(r);
+				SimpleTranslationVo bestTrans = transService.getBestTranslationForArticle(r.getId());
+				r.setBestTranslation(bestTrans);
 			}
 		});
 		return result;
@@ -172,8 +175,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 	public ArticleListItemVo getArticleByQuery(final QueryWrapper<ArticleListItemVo> queryWrapper, final int userId) {
 		ArticleListItemVo vo = baseMapper.getArticleByQuery(queryWrapper);
 		if (vo != null && vo.isHasTrans()) {
-			transService.fillBestTranslationForArticle(vo);
-			transService.fillTranslations(vo);
+			SimpleTranslationVo bestTrans = transService.getBestTranslationForArticle(vo.getId());
+			vo.setBestTranslation(bestTrans);
 		}
 		if (userId > 0 && vo != null) {
 			vo.setLike(articleLikeService.getOne(queryLikeTableById(vo.getId(), userId)) != null);
@@ -226,7 +229,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
 	@Override
 	@Transactional
-	public ArticleTranslationVo getArticleTrans(final int articleId) {
+	public ArticleTranslationVo getArticleTrans(final int articleId, final Page<SimpleTranslationVo> page) {
 		ArticleListItemVo articleListItemVo = new ArticleListItemVo();
 		Article article = getById(articleId);
 		if (article == null) {
@@ -236,9 +239,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 			return null;
 		}
 		articleListItemVo.setId(articleId);
-		transService.fillTranslations(articleListItemVo);
-		transService.fillBestTranslationForArticle(articleListItemVo);
-		return new ArticleTranslationVo(articleListItemVo.getBestTranslation(), articleListItemVo.getTranslations());
+		IPage<SimpleTranslationVo> translationVoIPage = transService.getTranslations(articleId, page);
+		SimpleTranslationVo bestTrans = transService.getBestTranslationForArticle(articleId);
+		int transCount = transService.count(new QueryWrapper<ArticleTrans>().eq("article_id", articleId));
+		return new ArticleTranslationVo(bestTrans, translationVoIPage.getRecords(), transCount);
 	}
 
 	private void saveSegments(int articleId, List<String> segments) {

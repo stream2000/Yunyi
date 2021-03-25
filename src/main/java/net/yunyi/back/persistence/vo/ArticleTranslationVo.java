@@ -10,4 +10,5 @@ import java.util.List;
 public class ArticleTranslationVo {
 	private SimpleTranslationVo bestTranslation;
 	private List<SimpleTranslationVo> translations;
+	private int transCount;
 }

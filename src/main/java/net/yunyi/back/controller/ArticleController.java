@@ -268,8 +268,9 @@ public class ArticleController {
 	@GetMapping("/{id}/trans")
 	@ResponseBody
 	@ApiOperation(value = "获取文章的翻译（最佳翻译+所有翻译的缩略）")
-	public ApiResult<ArticleTranslationVo> getArticleTrans(@PathVariable int id) {
-		return ApiResult.ok(articleService.getArticleTrans(id));
+	public ApiResult<ArticleTranslationVo> getArticleTrans(@RequestParam @Min(1) int pageId,
+			@RequestParam @Min(1) int pageSize, @PathVariable int id) {
+		return ApiResult.ok(articleService.getArticleTrans(id, new Page<>(pageId, pageSize)));
 	}
 
 }

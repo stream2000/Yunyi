@@ -13,5 +13,6 @@ public class SimpleTranslationVo {
 	private String transTitle;
 	private int uploaderId;
 	private int likeNum;
+	private int commentNum;
 	private int transId;
 }
