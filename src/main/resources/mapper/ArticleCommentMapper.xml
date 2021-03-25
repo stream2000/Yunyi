@@ -14,6 +14,7 @@
                  join user u
                       on u.id = c.sender_id
         where c.article_id = #{articleId}
+        order by c.floor
     </select>
 
     <select id="getArticleComment" resultType="net.yunyi.back.persistence.vo.ArticleCommentVo">
