@@ -15,4 +15,5 @@ public class SimpleTranslationVo {
 	private int likeNum;
 	private int commentNum;
 	private int transId;
+	private int transTime;
 }

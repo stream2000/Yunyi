@@ -86,6 +86,7 @@ create table article_trans
     article_id  int COMMENT '翻译对应原文id',
     uploader_id int COMMENT '上传者id',
     trans_title varchar(100) COMMENT '翻译标题',
+    create_time datetime COMMENT '发送时间',
     primary key (id)
 ) COMMENT '原文切分的翻译表';
 

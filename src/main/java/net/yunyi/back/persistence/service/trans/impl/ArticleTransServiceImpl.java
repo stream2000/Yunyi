@@ -15,7 +15,6 @@ import net.yunyi.back.persistence.entity.TransLike;
 import net.yunyi.back.persistence.entity.TransSegLike;
 import net.yunyi.back.persistence.entity.TransSegStats;
 import net.yunyi.back.persistence.entity.TransStats;
-import net.yunyi.back.persistence.entity.User;
 import net.yunyi.back.persistence.mapper.ArticleTransMapper;
 import net.yunyi.back.persistence.param.UploadTransParam;
 import net.yunyi.back.persistence.service.article.IArticleService;
@@ -244,6 +243,12 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 			throw new BizException(YunyiCommonEnum.TRANS_NOT_EXIST);
 		}
 
+		SimpleTranslationVo vo = baseMapper.getBestTranslation(new QueryWrapper<ArticleTrans>().eq("trans_id",
+				transId));
+		if (vo == null) {
+			throw new BizException(YunyiCommonEnum.TRANS_NOT_EXIST);
+		}
+
 		int articleId = trans.getArticleId();
 		ArticleListItemVo article = articleService.getArticleByQuery(new QueryWrapper<ArticleListItemVo>().eq("a.id",
 				articleId), trans.getUploaderId());
@@ -268,20 +273,7 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 			transSegments.add(transSegment);
 		}
 
-		int uploaderId = trans.getUploaderId();
-		User user = userService.getById(uploaderId);
-
-		if (user == null) {
-			throw new BizException(YunyiCommonEnum.TRANS_USER_NOT_FOUND);
-		}
-
-		user.setAge(0);
-		user.setEmail(null);
-		user.setPhone(null);
-
-		TransStats stats = transStatsService.getById(transId);
-
-		return new TranslationDetailVo(article, stats, user, transSegments);
+		return new TranslationDetailVo(vo, article, transSegments);
 	}
 
 	@Override

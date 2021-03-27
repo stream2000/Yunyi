@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.yunyi.back.persistence.entity.ArticleSegTrans;
 import net.yunyi.back.persistence.entity.ArticleTextSeg;
-import net.yunyi.back.persistence.entity.TransStats;
-import net.yunyi.back.persistence.entity.User;
 
 import java.util.List;
 
@@ -14,9 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TranslationDetailVo {
+	private SimpleTranslationVo trans;
 	private ArticleListItemVo article;
-	private TransStats stats;
-	private User uploader;
 	private List<TransSegment> translations;
 
 	@Data
