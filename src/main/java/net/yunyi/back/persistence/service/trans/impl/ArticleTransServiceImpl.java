@@ -250,7 +250,6 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		if (article == null) {
 			throw new BizException(YunyiCommonEnum.ARTICLE_NOT_FOUND);
 		}
-		article.setBestTranslation(null);
 		List<ArticleSegTrans> segTransList = articleSegTransService.list(new QueryWrapper<ArticleSegTrans>().eq(
 				"trans_id", transId));
 		segTransList.sort(Comparator.comparingInt(ArticleSegTrans::getTransSeq));
