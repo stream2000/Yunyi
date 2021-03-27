@@ -24,6 +24,7 @@ import net.yunyi.back.persistence.service.trans.IArticleTextSegService;
 import net.yunyi.back.persistence.vo.ArticleCommentPageVo;
 import net.yunyi.back.persistence.vo.ArticleCommentVo;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
+import net.yunyi.back.persistence.vo.ArticleSegsVo;
 import net.yunyi.back.persistence.vo.ArticleTranslationVo;
 import net.yunyi.back.persistence.vo.NewsPageVo;
 import net.yunyi.back.persistence.vo.UserUploadedArticleVo;
@@ -220,13 +221,17 @@ public class ArticleController {
 	@GetMapping("/{id}/segs")
 	@ResponseBody
 	@ApiOperation(value = "获取文章分段")
-	public ApiResult<List<ArticleTextSeg>> getArticleTextSegs(@PathVariable int id) {
+	public ApiResult<ArticleSegsVo> getArticleTextSegs(@PathVariable int id) {
+		Article article = articleService.getById(id);
+		if (article == null) {
+			throw new BizException(YunyiCommonEnum.ARTICLE_NOT_FOUND);
+		}
 
 		QueryWrapper<ArticleTextSeg> query = new QueryWrapper<ArticleTextSeg>().eq("article_id", id);
 		List<ArticleTextSeg> result = articleTextSegService.list(query);
 		result.sort((o1, o2) -> o1.getSequenceNumber() > o2.getSequenceNumber() ? 1 : 0);
 
-		return ApiResult.ok(result);
+		return ApiResult.ok(new ArticleSegsVo(article.getTitle(), result));
 	}
 
 	@PostMapping("/comment/add")
