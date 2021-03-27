@@ -28,6 +28,7 @@ import net.yunyi.back.persistence.service.trans.ITransLikeService;
 import net.yunyi.back.persistence.service.trans.ITransSegLikeService;
 import net.yunyi.back.persistence.service.trans.ITransSegStatsService;
 import net.yunyi.back.persistence.service.trans.ITransStatsService;
+import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
 import net.yunyi.back.persistence.vo.TranslationDetailVo;
 import org.apache.commons.lang3.StringUtils;
@@ -191,6 +192,19 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 	}
 
 	@Override
+	public IPage<SimpleTranslationVo> getTranslations(int articleId, final Page<SimpleTranslationVo> page) {
+		QueryWrapper<ArticleTrans> query = new QueryWrapper<>();
+		query.eq("article_id", articleId);
+		query.orderByDesc("stats.like_num * 3 + stats.comment_num * 4");
+		IPage<SimpleTranslationVo> transList = baseMapper.getSimpleTranslations(page, query);
+		transList.getSize();
+		for (final SimpleTranslationVo translation : transList.getRecords()) {
+			translation.setContent(getSimpleTransContent(translation.getTransId()));
+		}
+		return transList;
+	}
+
+	@Override
 	@Transactional
 	public boolean likeTrans(final int transId, final int userId) {
 		QueryWrapper<TransLike> query = queryLikeTableById(transId, userId);
@@ -231,11 +245,12 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		}
 
 		int articleId = trans.getArticleId();
-		Article article = articleService.getById(articleId);
+		ArticleListItemVo article = articleService.getArticleByQuery(new QueryWrapper<ArticleListItemVo>().eq("a.id",
+				articleId), trans.getUploaderId());
 		if (article == null) {
 			throw new BizException(YunyiCommonEnum.ARTICLE_NOT_FOUND);
 		}
-
+		article.setBestTranslation(null);
 		List<ArticleSegTrans> segTransList = articleSegTransService.list(new QueryWrapper<ArticleSegTrans>().eq(
 				"trans_id", transId));
 		segTransList.sort(Comparator.comparingInt(ArticleSegTrans::getTransSeq));
@@ -302,19 +317,6 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		stats.setLikeNum(currentLikeNum - 1);
 		transSegStatsService.updateById(stats);
 		return true;
-	}
-
-	@Override
-	public IPage<SimpleTranslationVo> getTranslations(int articleId, final Page<SimpleTranslationVo> page) {
-		QueryWrapper<ArticleTrans> query = new QueryWrapper<>();
-		query.eq("article_id", articleId);
-		query.orderByDesc("stats.like_num * 3 + stats.comment_num * 4");
-		IPage<SimpleTranslationVo> transList = baseMapper.getSimpleTranslations(page, query);
-		transList.getSize();
-		for (final SimpleTranslationVo translation : transList.getRecords()) {
-			translation.setContent(getSimpleTransContent(translation.getTransId()));
-		}
-		return transList;
 	}
 
 	private String getSimpleTransContent(int transId) {
