@@ -19,6 +19,7 @@ import net.yunyi.back.persistence.service.trans.IArticleTransService;
 import net.yunyi.back.persistence.service.trans.ITransCommentService;
 import net.yunyi.back.persistence.service.trans.ITransItemCommentService;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
+import net.yunyi.back.persistence.vo.StatsVo;
 import net.yunyi.back.persistence.vo.TransCommentPageVo;
 import net.yunyi.back.persistence.vo.TransCommentVo;
 import net.yunyi.back.persistence.vo.TransSegCommentPageVo;
@@ -152,6 +153,18 @@ public class TranslationController {
 		return ApiResult.ok(articleTransService.getTranslationDetail(userId, transId));
 	}
 
+
+	@GetMapping("/{transId}/stats")
+	@ResponseBody
+	@LoginEnable
+	@ApiOperation(value = "获取翻译详情(分段数据)")
+	public ApiResult<StatsVo> getTranslationStats(@Nullable @RequestAttribute(value = "user") User user,
+			@PathVariable final int transId) {
+		int userId = user == null ? -1 : user.getId().intValue();
+		return ApiResult.ok(articleTransService.getTransStats(userId, transId));
+	}
+
+
 	@PostMapping("/detail/comment/add")
 	@ResponseBody
 	@LoginRequired
@@ -197,4 +210,13 @@ public class TranslationController {
 		return ApiResult.ok(new TransSegCommentPageVo(result.getRecords(), commentCount));
 	}
 
+	@GetMapping("/seg/{id}/stats")
+	@ResponseBody
+	@ApiOperation(value = "获取单句翻译的评论")
+	@LoginEnable
+	public ApiResult<StatsVo> getDetailTranslationComment(@Nullable @RequestAttribute User user,
+			@PathVariable int id) {
+		int userId = user == null ? -1 : user.getId().intValue();
+		return ApiResult.ok(articleTransService.getTransSegStats(userId, id));
+	}
 }

@@ -29,6 +29,7 @@ import net.yunyi.back.persistence.service.trans.ITransSegStatsService;
 import net.yunyi.back.persistence.service.trans.ITransStatsService;
 import net.yunyi.back.persistence.vo.ArticleListItemVo;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
+import net.yunyi.back.persistence.vo.StatsVo;
 import net.yunyi.back.persistence.vo.TranslationDetailVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -327,6 +328,42 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 		stats.setLikeNum(currentLikeNum - 1);
 		transSegStatsService.updateById(stats);
 		return true;
+	}
+
+	@Override
+	public StatsVo getTransStats(final int userId, final int transId) {
+		TransStats stats = transStatsService.getById(transId);
+		if (stats == null) {
+			throw new BizException(YunyiCommonEnum.TRANS_NOT_EXIST);
+		}
+
+		boolean isLike = false;
+		if (userId >= 0) {
+			QueryWrapper<TransLike> query = queryLikeTableById(transId, userId);
+			if (transLikeService.getOne(query) != null) {
+				isLike = true;
+			}
+		}
+
+		return new StatsVo(stats.getCommentNum(), stats.getLikeNum(), isLike);
+	}
+
+	@Override
+	public StatsVo getTransSegStats(final int userId, final int segId) {
+		TransSegStats stats = transSegStatsService.getById(segId);
+		if (stats == null) {
+			throw new BizException(YunyiCommonEnum.TRANS_SEG_NOT_EXISTS);
+		}
+
+		boolean isLike = false;
+		if (userId >= 0) {
+			QueryWrapper<TransSegLike> query = querySegLikeTableById(segId, userId);
+			if (transSegLikeService.getOne(query) != null) {
+				isLike = true;
+			}
+		}
+
+		return new StatsVo(stats.getCommentNum(), stats.getLikeNum(), isLike);
 	}
 
 	private String getSimpleTransContent(int transId) {

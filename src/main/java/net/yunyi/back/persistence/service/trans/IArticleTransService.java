@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import net.yunyi.back.persistence.entity.ArticleTrans;
 import net.yunyi.back.persistence.param.UploadTransParam;
 import net.yunyi.back.persistence.vo.SimpleTranslationVo;
+import net.yunyi.back.persistence.vo.StatsVo;
 import net.yunyi.back.persistence.vo.TranslationDetailVo;
 
 /**
@@ -38,5 +39,9 @@ public interface IArticleTransService extends IService<ArticleTrans> {
 	boolean likeTransSeg(int userId, int transSegId);
 
 	boolean cancelLikeTransSeg(int userId, int transSegId);
+
+	StatsVo getTransStats(int userId, int transId);
+
+	StatsVo getTransSegStats(int userId, int segId);
 
 }
