@@ -15,11 +15,13 @@ public class TranslationDetailVo {
 	private SimpleTranslationVo trans;
 	private ArticleListItemVo article;
 	private List<TransSegment> translations;
+	private boolean isLike;
 
 	@Data
 	public static class TransSegment {
 		private List<ArticleTextSeg> segments;
 		private ArticleSegTrans trans;
+		private boolean isLike;
 	}
 
 }

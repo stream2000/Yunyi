@@ -33,7 +33,7 @@ public interface IArticleTransService extends IService<ArticleTrans> {
 
 	boolean cancelLikeTrans(int transId, final int userId);
 
-	TranslationDetailVo getTranslationDetail(int transId);
+	TranslationDetailVo getTranslationDetail(final int userId, int transId);
 
 	boolean likeTransSeg(int userId, int transSegId);
 

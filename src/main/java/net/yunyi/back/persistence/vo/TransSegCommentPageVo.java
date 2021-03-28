@@ -9,5 +9,5 @@ import java.util.List;
 @AllArgsConstructor
 public class TransSegCommentPageVo {
 	List<TransSegCommentVo> comments;
-	int pageCount;
+	int commentCount;
 }

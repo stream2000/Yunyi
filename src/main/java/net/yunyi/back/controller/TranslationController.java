@@ -59,7 +59,8 @@ public class TranslationController {
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "上传翻译接口, 返回翻译id")
-	public ApiResult<Integer> uploadTranslation(@RequestAttribute("user") User user, @RequestBody @Valid UploadTransParam param) {
+	public ApiResult<Integer> uploadTranslation(@RequestAttribute("user") User user,
+			@RequestBody @Valid UploadTransParam param) {
 		for (UploadTransParam.TransSegment segment : param.getSegmentList()) {
 			if (segment == null || segment.getRefSegIds() == null || segment.getRefSegIds().isEmpty()) {
 				throw new BizException(YunyiCommonEnum.TRANS_PARAM_ERROR);
@@ -81,7 +82,8 @@ public class TranslationController {
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "修改翻译")
-	public ApiResult<Integer> modifyTranslation(@RequestAttribute("user") User user, @PathVariable int id, @RequestBody @Valid UploadTransParam param) {
+	public ApiResult<Integer> modifyTranslation(@RequestAttribute("user") User user, @PathVariable int id,
+			@RequestBody @Valid UploadTransParam param) {
 		return ApiResult.ok(articleTransService.modifyTranslation(user.getId().intValue(), param));
 	}
 
@@ -96,8 +98,10 @@ public class TranslationController {
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "添加对整个翻译的评论")
-	public ApiResult<Integer> addTranslationComment(@RequestAttribute(value = "user") User user, @RequestBody @Valid AddTranslationCommentParam param) {
-		return ApiResult.ok(transCommentService.addTransComment(user.getId().intValue(), param.getTransId(), param.getContent(), param.isHasRefComment(), param.getRefCommentId()));
+	public ApiResult<Integer> addTranslationComment(@RequestAttribute(value = "user") User user,
+			@RequestBody @Valid AddTranslationCommentParam param) {
+		return ApiResult.ok(transCommentService.addTransComment(user.getId().intValue(), param.getTransId(),
+				param.getContent(), param.isHasRefComment(), param.getRefCommentId()));
 	}
 
 	@PostMapping("/comment/{id}/delete")
@@ -111,20 +115,15 @@ public class TranslationController {
 	@GetMapping("/{id}/comments")
 	@ResponseBody
 	@ApiOperation(value = "获取翻译界面的评论")
-	public ApiResult<TransCommentPageVo> getTranslationComment(@RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
+	public ApiResult<TransCommentPageVo> getTranslationComment(@RequestParam @Min(1) int pageId,
+			@RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
 		QueryWrapper<TransCommentVo> query = new QueryWrapper<>();
 		query.eq("c.trans_id", id);
 		IPage<TransCommentVo> result = transCommentService.getTransComments(new Page<>(pageId, pageSize), query);
 
 		int commentCount = transCommentService.count(new QueryWrapper<TransComment>().eq("trans_id", id));
 
-		// compute the page count
-		int pageCount = commentCount / pageSize;
-		if (pageCount == 0) {
-			pageCount = 1;
-		}
-
-		return ApiResult.ok(new TransCommentPageVo(result.getRecords(), pageCount));
+		return ApiResult.ok(new TransCommentPageVo(result.getRecords(), commentCount));
 	}
 
 	@PostMapping("/{transId}/like")
@@ -147,16 +146,20 @@ public class TranslationController {
 	@ResponseBody
 	@LoginEnable
 	@ApiOperation(value = "获取翻译详情(分段数据)")
-	public ApiResult<TranslationDetailVo> getTranslationDetail(@PathVariable final int transId) {
-		return ApiResult.ok(articleTransService.getTranslationDetail(transId));
+	public ApiResult<TranslationDetailVo> getTranslationDetail(@Nullable @RequestAttribute(value = "user") User user,
+			@PathVariable final int transId) {
+		int userId = user == null ? -1 : user.getId().intValue();
+		return ApiResult.ok(articleTransService.getTranslationDetail(userId, transId));
 	}
 
 	@PostMapping("/detail/comment/add")
 	@ResponseBody
 	@LoginRequired
 	@ApiOperation(value = "添加对翻译片段的评论")
-	public ApiResult<Integer> addDetailTranslationComment(@RequestAttribute(value = "user") User user, @RequestBody AddTranslationSegCommentParam param) {
-		return ApiResult.ok(transItemCommentService.addTransItemComment(user.getId().intValue(), param.getTransSegId(), param.getContent()));
+	public ApiResult<Integer> addDetailTranslationComment(@RequestAttribute(value = "user") User user,
+			@RequestBody AddTranslationSegCommentParam param) {
+		return ApiResult.ok(transItemCommentService.addTransItemComment(user.getId().intValue(), param.getTransSegId()
+				, param.getContent()));
 	}
 
 	@PostMapping("/detail/comment/{id}/delete")
@@ -185,20 +188,13 @@ public class TranslationController {
 
 	@GetMapping("/detail/{id}/comments")
 	@ResponseBody
-	@LoginEnable
 	@ApiOperation(value = "获取单句翻译的评论")
-	public ApiResult<TransSegCommentPageVo> getDetailTranslationComment(@Nullable @RequestAttribute User user, @RequestParam @Min(1) int pageId, @RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
-		IPage<TransSegCommentVo> result = transItemCommentService.getTransSegComments(new Page<>(pageId, pageSize), id);
-
+	public ApiResult<TransSegCommentPageVo> getDetailTranslationComment(@RequestParam @Min(1) int pageId,
+			@RequestParam @Min(1) int pageSize, @PathVariable int id, @Nullable @RequestParam String sort) {
+		IPage<TransSegCommentVo> result = transItemCommentService.getTransSegComments(new Page<>(pageId, pageSize),
+				id);
 		int commentCount = transItemCommentService.count(new QueryWrapper<TransItemComment>().eq("trans_seg_id", id));
-
-		// compute the page count
-		int pageCount = commentCount / pageSize;
-		if (pageCount == 0) {
-			pageCount = 1;
-		}
-
-		return ApiResult.ok(new TransSegCommentPageVo(result.getRecords(), pageCount));
+		return ApiResult.ok(new TransSegCommentPageVo(result.getRecords(), commentCount));
 	}
 
 }

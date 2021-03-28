@@ -237,7 +237,7 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 	}
 
 	@Override
-	public TranslationDetailVo getTranslationDetail(final int transId) {
+	public TranslationDetailVo getTranslationDetail(final int userId, final int transId) {
 		ArticleTrans trans = getById(transId);
 		if (trans == null) {
 			throw new BizException(YunyiCommonEnum.TRANS_NOT_EXIST);
@@ -261,7 +261,10 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 
 		List<TranslationDetailVo.TransSegment> transSegments = new ArrayList<>();
 		for (ArticleSegTrans segTrans : segTransList) {
+
 			TranslationDetailVo.TransSegment transSegment = new TranslationDetailVo.TransSegment();
+			transSegment.setTrans(segTrans);
+
 			transSegment.setSegments(new ArrayList<>());
 			String[] refIds = segTrans.getRefIds().split(","); // 用,分割
 			for (String refId : refIds) {
@@ -269,11 +272,27 @@ public class ArticleTransServiceImpl extends ServiceImpl<ArticleTransMapper, Art
 				ArticleTextSeg seg = articleTextSegService.getById(textSegId);
 				transSegment.getSegments().add(seg);
 			}
-			transSegment.setTrans(segTrans);
+
+			if (userId >= 0) {
+				QueryWrapper<TransSegLike> query = querySegLikeTableById(segTrans.getId().intValue(), userId);
+				if (transSegLikeService.getOne(query) != null) {
+					transSegment.setLike(true);
+				}
+			}
+
 			transSegments.add(transSegment);
 		}
 
-		return new TranslationDetailVo(vo, article, transSegments);
+		boolean isLike = false;
+
+		if (userId >= 0) {
+			QueryWrapper<TransLike> query = queryLikeTableById(transId, userId);
+			if (transLikeService.getOne(query) != null) {
+				isLike = true;
+			}
+		}
+
+		return new TranslationDetailVo(vo, article, transSegments, isLike);
 	}
 
 	@Override
