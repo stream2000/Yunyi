@@ -1,12 +1,14 @@
 package net.yunyi.back.persistence.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -51,7 +53,8 @@ public class TransItemComment implements Serializable {
 	/**
 	 * 发送时间
 	 */
-	private LocalDateTime createTime;
+	@TableField(value = "create_time", fill = FieldFill.INSERT) //新增有效
+	private Date createTime;
 
 
 }
